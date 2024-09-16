@@ -18,7 +18,7 @@ namespace HRMSPOC.API.Data
             modelBuilder.Entity<Employee>()
                 .HasOne(e => e.Organization)
                 .WithMany(o => o.Employees)
-                .HasForeignKey(e => e.Organization.Id);
+                .HasForeignKey(e => e.OrganizationId);
 
         }
     }
