@@ -18,6 +18,6 @@ namespace HRMSPOC.API.Models
         [Required]
         public string PhoneNumber { get; set; }
         public int OrganizationId { get; set; }
-        public Organization Organization { get; set; }
+        public Organization? Organization { get; set; }
     }
 }

@@ -1,4 +1,8 @@
 using HRMSPOC.API.Data;
+using HRMSPOC.API.Repositories;
+using HRMSPOC.API.Repositories.Interfaces;
+using HRMSPOC.API.Services;
+using HRMSPOC.API.Services.Interface;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,8 +14,17 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Register DbContext
 builder.Services.AddDbContext<HRMSDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("conn")));
+
+// Register Repository
+builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+builder.Services.AddScoped<IOrganizationRepository, OrganizationRepository>();
+
+// Register Services
+builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+builder.Services.AddScoped<IOrganizationService, OrganizationService>();
 
 var app = builder.Build();
 

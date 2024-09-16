@@ -35,6 +35,14 @@ namespace HRMSPOC.API.Controllers
         [HttpPost]
         public async Task<ActionResult> CreateEmployee([FromBody] Employee employee)
         {
+            if (employee == null)
+            {
+                return BadRequest("Employee Data is Required.");
+            }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             await _employeeService.CreateEmployeeAsync(employee);  
             return CreatedAtAction(nameof(GetEmployeeById), new { id = employee.Id }, employee);
         }

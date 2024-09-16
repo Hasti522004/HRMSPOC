@@ -1,5 +1,6 @@
 ﻿using HRMSPOC.API.Models;
 using HRMSPOC.API.Services;
+using HRMSPOC.API.Services.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,8 +10,8 @@ namespace HRMSPOC.API.Controllers
     [ApiController]
     public class OrganizationController : ControllerBase
     {
-        private readonly OrganizationService _organizationService;
-        public OrganizationController(OrganizationService organizationService)
+        private readonly IOrganizationService _organizationService;
+        public OrganizationController(IOrganizationService organizationService)
         {
             _organizationService = organizationService;
         }
@@ -32,6 +33,14 @@ namespace HRMSPOC.API.Controllers
         [HttpPost]
         public async Task<ActionResult> CreateOrganization([FromBody] Organization organization)
         {
+            if(organization == null)
+            {
+                return BadRequest("Organization Data is Required");
+            }
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             await _organizationService.CreateOrganizationAsync(organization);
             return CreatedAtAction(nameof(GetOrganizationById),new {id = organization.Id},organization);
         }

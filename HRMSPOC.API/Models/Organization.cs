@@ -13,6 +13,6 @@ namespace HRMSPOC.API.Models
         public string Address { get; set; }
 
         //Navigation Property
-        public ICollection<Employee> Employees { get; set; }
+        public ICollection<Employee> Employees { get; set; } = new List<Employee>();
     }
 }
