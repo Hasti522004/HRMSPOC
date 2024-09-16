@@ -4,10 +4,10 @@ namespace HRMSPOC.API.Services.Interface
 {
     public interface IOrganizationService
     {
-        Task<IEnumerable<Organization>> GetEmployeesAsync();
-        Task<Organization> GetEmployeeByIdAsync(int id);
-        Task CreateEmployeeAsync(Organization organization);
-        Task UpdateEmployeeAsync(Organization organization);
-        Task DeleteEmployeeAsync(int id);
+        Task<IEnumerable<Organization>> GetOrganizationsAsync();
+        Task<Organization> GetOrganizationByIdAsync(int id);
+        Task CreateOrganizationAsync(Organization organization);
+        Task UpdateOrganizationAsync(Organization organization);
+        Task DeleteOrganizationAsync(int id);
     }
 }
