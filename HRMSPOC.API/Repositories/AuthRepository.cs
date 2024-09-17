@@ -2,6 +2,7 @@
 using HRMSPOC.API.Models;
 using HRMSPOC.API.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -25,6 +26,26 @@ namespace HRMSPOC.API.Repositories
 
         public async Task<string> RegisterAsync(AuthDTO registerDto, string role)
         {
+            if(!await _roleManager.RoleExistsAsync("Admin"))
+            {
+                var adminRoleResult = await _roleManager.CreateAsync(new IdentityRole("Admin"));
+                if(!adminRoleResult.Succeeded)
+                {
+                    throw new Exception("Role Creation Failed: "+ string.Join(", ", adminRoleResult.Errors.Select(e => e.Description)));
+                }
+            }
+
+            var adminRoleExists = await _userManager.Users.AnyAsync(u => _userManager.IsInRoleAsync(u, "Admin").Result);
+
+            if (adminRoleExists)
+            {
+                role = "HR";
+            }
+            else
+            {
+                role = "Admin";
+            }
+
             var user = new ApplicationUser
             {
                 UserName = registerDto.Email,
@@ -46,7 +67,12 @@ namespace HRMSPOC.API.Repositories
                     throw new Exception("Role Creation Failed: " + string.Join(", ", roleResult.Errors.Select(e => e.Description)));
                 }
             }
-
+            // Assign the role to the user
+            var roleAssignResult = await _userManager.AddToRoleAsync(user, role);
+            if (!roleAssignResult.Succeeded)
+            {
+                throw new Exception($"Failed to assign role: {string.Join(", ", roleAssignResult.Errors.Select(e => e.Description))}");
+            }
             return GenerateJwtToken(user);
         }
         public async Task<string> LoginAsync(AuthDTO loginDto)

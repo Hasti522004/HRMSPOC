@@ -4,6 +4,7 @@ using HRMSPOC.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HRMSPOC.API.Migrations
 {
     [DbContext(typeof(HRMSDbContext))]
-    partial class HRMSDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240917125817_initial-database")]
+    partial class initialdatabase
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -179,14 +182,14 @@ namespace HRMSPOC.API.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "31959ad5-7624-4932-8238-f6a081330363",
+                            Id = "82c32285-a990-48ed-a010-22d15572b006",
                             ConcurrencyStamp = "1",
                             Name = "Admin",
                             NormalizedName = "Admin"
                         },
                         new
                         {
-                            Id = "84a7880b-b08d-499c-afca-c0c94017240d",
+                            Id = "c1199dc6-1f0b-4def-90b0-12ce489959b4",
                             ConcurrencyStamp = "2",
                             Name = "HR",
                             NormalizedName = "HR"
