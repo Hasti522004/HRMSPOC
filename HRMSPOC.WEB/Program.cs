@@ -3,6 +3,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddHttpClient("HRMSAPI", client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7095/");
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
