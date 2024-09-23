@@ -27,7 +27,7 @@
                 <td>
                     <a href="@Url.Action("Edit", new { id = org.Id })" class="btn btn-secondary">Edit</a>
                     <a href="@Url.Action("Delete", new { id = org.Id })" class="btn btn-danger">Delete</a>
-                    <a href="@Url.Action("ManageHR", "HR", new { organizationId = org.Id })" class="btn btn-info">Manage HR for @org.Name</a>
+                    <a href="@Url.Action("Index", "HR", new { organizationId = org.Id })" class="btn btn-info">Manage HR for @org.Name</a>
                 </td>
             </tr>
         }
