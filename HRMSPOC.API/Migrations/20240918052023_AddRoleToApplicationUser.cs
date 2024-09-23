@@ -7,7 +7,7 @@
 namespace HRMSPOC.API.Migrations
 {
     /// <inheritdoc />
-    public partial class changesinRole : Migration
+    public partial class AddRoleToApplicationUser : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,20 +15,20 @@ namespace HRMSPOC.API.Migrations
             migrationBuilder.DeleteData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
-                keyValue: "82c32285-a990-48ed-a010-22d15572b006");
+                keyValue: "971eaba3-0c9c-43c4-8c46-a7919dba2878");
 
             migrationBuilder.DeleteData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
-                keyValue: "c1199dc6-1f0b-4def-90b0-12ce489959b4");
+                keyValue: "e58564fc-d655-4559-aea7-216e659157d8");
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "31959ad5-7624-4932-8238-f6a081330363", "1", "Admin", "Admin" },
-                    { "84a7880b-b08d-499c-afca-c0c94017240d", "2", "HR", "HR" }
+                    { "68d35f6d-1392-4215-9adc-8ccb5064fae4", "2", "HR", "HR" },
+                    { "d0d04c9d-987f-4c55-988b-24669f758331", "1", "Admin", "Admin" }
                 });
         }
 
@@ -38,20 +38,20 @@ namespace HRMSPOC.API.Migrations
             migrationBuilder.DeleteData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
-                keyValue: "31959ad5-7624-4932-8238-f6a081330363");
+                keyValue: "68d35f6d-1392-4215-9adc-8ccb5064fae4");
 
             migrationBuilder.DeleteData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
-                keyValue: "84a7880b-b08d-499c-afca-c0c94017240d");
+                keyValue: "d0d04c9d-987f-4c55-988b-24669f758331");
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "82c32285-a990-48ed-a010-22d15572b006", "1", "Admin", "Admin" },
-                    { "c1199dc6-1f0b-4def-90b0-12ce489959b4", "2", "HR", "HR" }
+                    { "971eaba3-0c9c-43c4-8c46-a7919dba2878", "1", "Admin", "Admin" },
+                    { "e58564fc-d655-4559-aea7-216e659157d8", "2", "HR", "HR" }
                 });
         }
     }

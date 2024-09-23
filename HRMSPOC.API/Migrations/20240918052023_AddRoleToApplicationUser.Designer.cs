@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HRMSPOC.API.Migrations
 {
     [DbContext(typeof(HRMSDbContext))]
-    [Migration("20240917125817_initial-database")]
-    partial class initialdatabase
+    [Migration("20240918052023_AddRoleToApplicationUser")]
+    partial class AddRoleToApplicationUser
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -182,14 +182,14 @@ namespace HRMSPOC.API.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "82c32285-a990-48ed-a010-22d15572b006",
+                            Id = "d0d04c9d-987f-4c55-988b-24669f758331",
                             ConcurrencyStamp = "1",
                             Name = "Admin",
                             NormalizedName = "Admin"
                         },
                         new
                         {
-                            Id = "c1199dc6-1f0b-4def-90b0-12ce489959b4",
+                            Id = "68d35f6d-1392-4215-9adc-8ccb5064fae4",
                             ConcurrencyStamp = "2",
                             Name = "HR",
                             NormalizedName = "HR"

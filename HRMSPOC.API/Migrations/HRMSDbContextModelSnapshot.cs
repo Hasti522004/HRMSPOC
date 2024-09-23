@@ -179,14 +179,14 @@ namespace HRMSPOC.API.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "31959ad5-7624-4932-8238-f6a081330363",
+                            Id = "d0d04c9d-987f-4c55-988b-24669f758331",
                             ConcurrencyStamp = "1",
                             Name = "Admin",
                             NormalizedName = "Admin"
                         },
                         new
                         {
-                            Id = "84a7880b-b08d-499c-afca-c0c94017240d",
+                            Id = "68d35f6d-1392-4215-9adc-8ccb5064fae4",
                             ConcurrencyStamp = "2",
                             Name = "HR",
                             NormalizedName = "HR"

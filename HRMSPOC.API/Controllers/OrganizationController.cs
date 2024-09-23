@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HRMSPOC.API.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class OrganizationController : ControllerBase
@@ -32,7 +32,7 @@ namespace HRMSPOC.API.Controllers
             return Ok(org);
         }
 
-        [Authorize(Roles = "Admin")]
+        // [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult> CreateOrganization([FromBody] Organization organization)
         {

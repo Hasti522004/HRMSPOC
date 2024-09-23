@@ -48,6 +48,7 @@ namespace HRMSPOC.WEB.Controllers
         // POST: /Account/Login
         [HttpPost]
         public async Task<IActionResult> Login(LoginDTO loginDto)
+        
         {
             if (ModelState.IsValid)
             {
@@ -57,7 +58,7 @@ namespace HRMSPOC.WEB.Controllers
                     // Store token (e.g., in session, cookies)
                     HttpContext.Session.SetString("JWTToken", token);
 
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Dashboard", "Admin");
                 }
                 ModelState.AddModelError("", "Login failed.");
             }

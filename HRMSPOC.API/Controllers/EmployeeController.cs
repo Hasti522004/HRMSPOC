@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HRMSPOC.API.Controllers
 {
-    [Authorize(Roles = "HR")]
+    //[Authorize(Roles = "HR")]
     [Route("api/[controller]")]
     [ApiController]
     public class EmployeeController : ControllerBase

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HRMSPOC.API.Migrations
 {
     [DbContext(typeof(HRMSDbContext))]
-    [Migration("20240917072639_updateTables")]
-    partial class updateTables
+    [Migration("20240918051611_initialMigration")]
+    partial class initialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -178,6 +178,22 @@ namespace HRMSPOC.API.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "971eaba3-0c9c-43c4-8c46-a7919dba2878",
+                            ConcurrencyStamp = "1",
+                            Name = "Admin",
+                            NormalizedName = "Admin"
+                        },
+                        new
+                        {
+                            Id = "e58564fc-d655-4559-aea7-216e659157d8",
+                            ConcurrencyStamp = "2",
+                            Name = "HR",
+                            NormalizedName = "HR"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

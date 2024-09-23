@@ -2,7 +2,6 @@
 using HRMSPOC.API.Models;
 using HRMSPOC.API.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -26,26 +25,6 @@ namespace HRMSPOC.API.Repositories
 
         public async Task<string> RegisterAsync(AuthDTO registerDto, string role)
         {
-            if(!await _roleManager.RoleExistsAsync("Admin"))
-            {
-                var adminRoleResult = await _roleManager.CreateAsync(new IdentityRole("Admin"));
-                if(!adminRoleResult.Succeeded)
-                {
-                    throw new Exception("Role Creation Failed: "+ string.Join(", ", adminRoleResult.Errors.Select(e => e.Description)));
-                }
-            }
-
-            var adminRoleExists = await _userManager.Users.AnyAsync(u => _userManager.IsInRoleAsync(u, "Admin").Result);
-
-            if (adminRoleExists)
-            {
-                role = "HR";
-            }
-            else
-            {
-                role = "Admin";
-            }
-
             var user = new ApplicationUser
             {
                 UserName = registerDto.Email,
@@ -53,12 +32,6 @@ namespace HRMSPOC.API.Repositories
                 Role = role
             };
 
-            var result = await _userManager.CreateAsync(user, registerDto.Password);
-
-            if (!result.Succeeded)
-            {
-                throw new Exception("Registered Failed");
-            }
             if (!await _roleManager.RoleExistsAsync(role))
             {
                 var roleResult = await _roleManager.CreateAsync(new IdentityRole(role));
@@ -67,6 +40,14 @@ namespace HRMSPOC.API.Repositories
                     throw new Exception("Role Creation Failed: " + string.Join(", ", roleResult.Errors.Select(e => e.Description)));
                 }
             }
+
+            var result = await _userManager.CreateAsync(user, registerDto.Password);
+
+            if (!result.Succeeded)
+            {
+                throw new Exception("Registered Failed");
+            }
+            
             // Assign the role to the user
             var roleAssignResult = await _userManager.AddToRoleAsync(user, role);
             if (!roleAssignResult.Succeeded)
@@ -96,7 +77,6 @@ namespace HRMSPOC.API.Repositories
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Role, user.Role)
             };
 
@@ -107,7 +87,7 @@ namespace HRMSPOC.API.Repositories
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(double.Parse(_configuration["Jwt:ExpireMinutes"])),
+                expires: DateTime.Now.AddMinutes(30),
                 signingCredentials: creds
             );
 

@@ -1,0 +1,35 @@
+﻿@model List<HRMSPOC.WEB.Models.Organization>
+
+@{
+    ViewBag.Title = "Organizations";
+}
+
+<h2>Organizations</h2>
+
+<a href="@Url.Action("Create")" class="btn btn-primary">Create New Organization</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Address</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var org in Model)
+        {
+            <tr>
+                <td>@org.Id</td>
+                <td>@org.Name</td>
+                <td>@org.Address</td>
+                <td>
+                    <a href="@Url.Action("Edit", new { id = org.Id })" class="btn btn-secondary">Edit</a>
+                    <a href="@Url.Action("Delete", new { id = org.Id })" class="btn btn-danger">Delete</a>
+                    <a href="@Url.Action("ManageHR", "HR", new { organizationId = org.Id })" class="btn btn-info">Manage HR for @org.Name</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
