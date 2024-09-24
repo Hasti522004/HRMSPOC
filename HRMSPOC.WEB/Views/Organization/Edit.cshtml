@@ -1,8 +1,4 @@
-﻿@model HRMSPOC.WEB.Models.Organization
-
-@{
-    ViewBag.Title = "Edit Organization";
-}
+﻿@model HRMSPOC.WEB.Models.OrganizationViewModel
 
 <h2>Edit Organization</h2>
 
@@ -17,11 +13,6 @@
         <label asp-for="Address"></label>
         <input asp-for="Address" class="form-control" />
         <span asp-validation-for="Address" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Employees"></label>
-        <input asp-for="Employees" class="form-control" />
-        <span asp-validation-for="Employees" class="text-danger"></span>
     </div>
     <button type="submit" class="btn btn-primary">Save</button>
 </form>

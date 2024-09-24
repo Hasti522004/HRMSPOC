@@ -60,21 +60,28 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddAuthorization(options =>
 {
+    options.AddPolicy("SuperAdminOnly", policy => policy.RequireRole("SuperAdmin"));
     options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
     options.AddPolicy("HROnly", policy => policy.RequireRole("HR"));
+    options.AddPolicy("EmployeeOnly", policy => policy.RequireRole("Employee"));
 });
 
 // Register Repositories
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
-builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IOrganizationRepository, OrganizationRepository>();
 
 // Register Services
 builder.Services.AddScoped<DataSeeder>();
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IOrganizationService, OrganizationService>();
 
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+    });
 var app = builder.Build();
 
 // Seed default admin user before the app starts serving requests

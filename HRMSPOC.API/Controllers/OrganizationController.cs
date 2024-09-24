@@ -1,66 +1,73 @@
 ﻿using HRMSPOC.API.Models;
-using HRMSPOC.API.Services;
 using HRMSPOC.API.Services.Interface;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace HRMSPOC.API.Controllers
 {
-    //[Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class OrganizationController : ControllerBase
     {
         private readonly IOrganizationService _organizationService;
+
         public OrganizationController(IOrganizationService organizationService)
         {
             _organizationService = organizationService;
         }
 
+        // Get all organizations
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Organization>>> GetAllOrganization()
+        public async Task<ActionResult<IEnumerable<Organization>>> GetAllOrganizations()
         {
-            var orgs = await _organizationService.GetOrganizationsAsync();
-            return Ok(orgs);
+            var organizations = await _organizationService.GetOrganizationsAsync();
+            return Ok(organizations);
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Organization>> GetOrganizationById(int id)
+        // Get organization by ID (Guid)
+        [HttpGet("{id:guid}")]
+        public async Task<ActionResult<Organization>> GetOrganizationById(Guid id)
         {
-            var org = await _organizationService.GetOrganizationByIdAsync(id);
-            return Ok(org);
+            var organization = await _organizationService.GetOrganizationByIdAsync(id);
+            if (organization == null)
+            {
+                return NotFound();
+            }
+            return Ok(organization);
         }
 
-        // [Authorize(Roles = "Admin")]
+        // Create new organization
         [HttpPost]
-        public async Task<ActionResult> CreateOrganization([FromBody] Organization organization)
+        public async Task<ActionResult<Organization>> CreateOrganization([FromBody] Organization organization)
         {
-            if(organization == null)
+            if (organization == null)
             {
-                return BadRequest("Organization Data is Required");
+                return BadRequest("Organization data is required.");
             }
-            if(!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            await _organizationService.CreateOrganizationAsync(organization);
-            return CreatedAtAction(nameof(GetOrganizationById),new {id = organization.Id},organization);
+
+            // Replace with actual SuperAdmin ID logic
+            Guid superAdminId = new Guid("70cd23a7-e069-4f21-93ca-d862c72964e4");
+            var createdOrganization = await _organizationService.CreateOrganizationWithAdminAsync(organization, superAdminId);
+            return CreatedAtAction(nameof(GetOrganizationById), new { id = createdOrganization.Id }, createdOrganization);
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateOrganization(int id, [FromBody] Organization organization)
+        // Update organization (with Guid ID)
+        [HttpPut("{id:guid}")]
+        public async Task<ActionResult> UpdateOrganization(Guid id, [FromBody] Organization organization)
         {
-            if(id != organization.Id)
+            if (id != organization.Id)
             {
-                return BadRequest();
+                return BadRequest("Organization ID mismatch.");
             }
             await _organizationService.UpdateOrganizationAsync(organization);
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteOrganization(int id)
+        // Delete organization (with Guid ID)
+        [HttpDelete("{id:guid}")]
+        public async Task<ActionResult> DeleteOrganization(Guid id)
         {
             await _organizationService.DeleteOrganizationAsync(id);
             return NoContent();

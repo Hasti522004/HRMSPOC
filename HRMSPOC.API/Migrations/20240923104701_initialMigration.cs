@@ -31,8 +31,7 @@ namespace HRMSPOC.API.Migrations
                 name: "Organization",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
@@ -46,7 +45,11 @@ namespace HRMSPOC.API.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -84,30 +87,6 @@ namespace HRMSPOC.API.Migrations
                         name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Employees",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    OrganizationId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Employees", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Employees_Organization_OrganizationId",
-                        column: x => x.OrganizationId,
-                        principalTable: "Organization",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -197,13 +176,39 @@ namespace HRMSPOC.API.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "UserOrganizations",
+                columns: table => new
+                {
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    OrganizationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserOrganizations", x => new { x.UserId, x.OrganizationId });
+                    table.ForeignKey(
+                        name: "FK_UserOrganizations_Organization_OrganizationId",
+                        column: x => x.OrganizationId,
+                        principalTable: "Organization",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserOrganizations_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "971eaba3-0c9c-43c4-8c46-a7919dba2878", "1", "Admin", "Admin" },
-                    { "e58564fc-d655-4559-aea7-216e659157d8", "2", "HR", "HR" }
+                    { "33356456-e912-4f80-ba83-7ac58df5e103", "ef4dff63-f439-4d73-ab07-20220dd1b52a", "Employee", "EMPLOYEE" },
+                    { "763f55d4-0ba2-4828-98bd-37a90411d1bd", "63147f27-0cbb-4d02-a553-f577bdc11c70", "HR", "HR" },
+                    { "7722057d-3f27-4738-98a2-ddd606b10e6f", "09f16f5f-6516-482f-9073-6be06dc72745", "SuperAdmin", "SUPERADMIN" },
+                    { "80ad10dd-7c10-471e-a98f-182cbef79be7", "4d9364c8-9670-4023-ba17-7f74d8b86d4f", "Admin", "ADMIN" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -234,8 +239,8 @@ namespace HRMSPOC.API.Migrations
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Employees_OrganizationId",
-                table: "Employees",
+                name: "IX_UserOrganizations_OrganizationId",
+                table: "UserOrganizations",
                 column: "OrganizationId");
 
             migrationBuilder.CreateIndex(
@@ -270,16 +275,16 @@ namespace HRMSPOC.API.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Employees");
+                name: "UserOrganizations");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "Organization");
 
             migrationBuilder.DropTable(
-                name: "Organization");
+                name: "Users");
         }
     }
 }

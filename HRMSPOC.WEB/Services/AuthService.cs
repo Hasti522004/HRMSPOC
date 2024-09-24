@@ -9,16 +9,6 @@ namespace HRMSPOC.WEB.Services
         {
             _httpClient = httpClient;
         }
-        public async Task<string> RegisterAsync(RegisterDTO registerDTO)
-        {
-            var response = await _httpClient.PostAsJsonAsync("api/Auth/register", registerDTO);
-            if (response.IsSuccessStatusCode)
-            {
-                var result = await response.Content.ReadFromJsonAsync<TokenResponse>();
-                return result.Token;
-            }
-            return null;
-        }
         public async Task<string> LoginAsync(LoginDTO loginDto)
         {
             var response = await _httpClient.PostAsJsonAsync("api/Auth/login", loginDto);

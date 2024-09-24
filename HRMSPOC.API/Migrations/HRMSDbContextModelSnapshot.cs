@@ -30,9 +30,18 @@ namespace HRMSPOC.API.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -40,6 +49,14 @@ namespace HRMSPOC.API.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -64,10 +81,6 @@ namespace HRMSPOC.API.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -91,51 +104,11 @@ namespace HRMSPOC.API.Migrations
                     b.ToTable("Users", (string)null);
                 });
 
-            modelBuilder.Entity("HRMSPOC.API.Models.Employee", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("OrganizationId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrganizationId");
-
-                    b.ToTable("Employees");
-                });
-
             modelBuilder.Entity("HRMSPOC.API.Models.Organization", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Address")
                         .IsRequired()
@@ -148,6 +121,21 @@ namespace HRMSPOC.API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Organization");
+                });
+
+            modelBuilder.Entity("HRMSPOC.API.Models.UserOrganization", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<Guid>("OrganizationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("UserId", "OrganizationId");
+
+                    b.HasIndex("OrganizationId");
+
+                    b.ToTable("UserOrganizations");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -179,17 +167,31 @@ namespace HRMSPOC.API.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "d0d04c9d-987f-4c55-988b-24669f758331",
-                            ConcurrencyStamp = "1",
-                            Name = "Admin",
-                            NormalizedName = "Admin"
+                            Id = "7722057d-3f27-4738-98a2-ddd606b10e6f",
+                            ConcurrencyStamp = "09f16f5f-6516-482f-9073-6be06dc72745",
+                            Name = "SuperAdmin",
+                            NormalizedName = "SUPERADMIN"
                         },
                         new
                         {
-                            Id = "68d35f6d-1392-4215-9adc-8ccb5064fae4",
-                            ConcurrencyStamp = "2",
+                            Id = "80ad10dd-7c10-471e-a98f-182cbef79be7",
+                            ConcurrencyStamp = "4d9364c8-9670-4023-ba17-7f74d8b86d4f",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "763f55d4-0ba2-4828-98bd-37a90411d1bd",
+                            ConcurrencyStamp = "63147f27-0cbb-4d02-a553-f577bdc11c70",
                             Name = "HR",
                             NormalizedName = "HR"
+                        },
+                        new
+                        {
+                            Id = "33356456-e912-4f80-ba83-7ac58df5e103",
+                            ConcurrencyStamp = "ef4dff63-f439-4d73-ab07-20220dd1b52a",
+                            Name = "Employee",
+                            NormalizedName = "EMPLOYEE"
                         });
                 });
 
@@ -299,13 +301,21 @@ namespace HRMSPOC.API.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("HRMSPOC.API.Models.Employee", b =>
+            modelBuilder.Entity("HRMSPOC.API.Models.UserOrganization", b =>
                 {
                     b.HasOne("HRMSPOC.API.Models.Organization", "Organization")
-                        .WithMany("Employees")
+                        .WithMany("UserOrganizations")
                         .HasForeignKey("OrganizationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("HRMSPOC.API.Models.ApplicationUser", "ApplicationUser")
+                        .WithMany("UserOrganizations")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
 
                     b.Navigation("Organization");
                 });
@@ -361,9 +371,14 @@ namespace HRMSPOC.API.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("HRMSPOC.API.Models.ApplicationUser", b =>
+                {
+                    b.Navigation("UserOrganizations");
+                });
+
             modelBuilder.Entity("HRMSPOC.API.Models.Organization", b =>
                 {
-                    b.Navigation("Employees");
+                    b.Navigation("UserOrganizations");
                 });
 #pragma warning restore 612, 618
         }

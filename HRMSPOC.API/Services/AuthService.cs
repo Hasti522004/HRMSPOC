@@ -15,10 +15,5 @@ namespace HRMSPOC.API.Services
         {
             return await _authRepository.LoginAsync(loginDto);
         }
-
-        public async Task<string> RegisterAsync(AuthDTO registerDto)
-        {
-            return await _authRepository.RegisterAsync(registerDto,"HR");
-        }
     }
 }

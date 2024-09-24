@@ -1,37 +1,55 @@
 ﻿using HRMSPOC.API.Models;
 using Microsoft.AspNetCore.Identity;
 
-namespace HRMSPOC.API.Services;
-
-public class DataSeeder
+namespace HRMSPOC.API.Services
 {
-    private readonly RoleManager<IdentityRole> _roleManager;
-    private readonly UserManager<ApplicationUser> _userManager;    
-    public DataSeeder(RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager)
+    public class DataSeeder
     {
-        _roleManager = roleManager;
-        _userManager = userManager;
-    }
-    public async Task SeedAdminUserAsync()
-    {
-        if(! await _roleManager.RoleExistsAsync("Admin"))
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+
+        public DataSeeder(RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager)
         {
-            await _roleManager.CreateAsync(new IdentityRole("Admin"));
+            _roleManager = roleManager;
+            _userManager = userManager;
         }
-        var adminUser = await _userManager.FindByEmailAsync("admin@admin.com");
-        if (adminUser == null)
+
+        public async Task SeedAdminUserAsync()
         {
-            var admin = new ApplicationUser
+            // Seed roles
+            await SeedRoleAsync("SuperAdmin");
+            await SeedRoleAsync("Admin");
+            await SeedRoleAsync("HR");
+            await SeedRoleAsync("Employee");
+
+            // Seed the SuperAdmin user
+            var superAdminUser = await _userManager.FindByEmailAsync("superadmin@admin.com");
+            if (superAdminUser == null)
             {
-                UserName = "admin@admin.com",
-                Email = "admin@admin.com",
-                EmailConfirmed = true,
-                Role = "Admin"
-            };
-            var result = await _userManager.CreateAsync(admin,"Admin@123");
-            if(result.Succeeded)
+                var superAdmin = new ApplicationUser
+                {
+                    UserName = "superadmin@admin.com",
+                    Email = "superadmin@admin.com",
+                    FirstName = "Super", // Set default first name
+                    LastName = "Admin",  // Set default last name
+                    Address = "123 Admin St", // Default address to satisfy the non-nullable field
+                    EmailConfirmed = true,
+                };
+
+                var result = await _userManager.CreateAsync(superAdmin, "SuperAdmin@123");
+                if (result.Succeeded)
+                {
+                    await _userManager.AddToRoleAsync(superAdmin, "SuperAdmin");
+                }
+            }
+        }
+
+
+        private async Task SeedRoleAsync(string roleName)
+        {
+            if (!await _roleManager.RoleExistsAsync(roleName))
             {
-                await _userManager.AddToRoleAsync(admin, "Admin");
+                await _roleManager.CreateAsync(new IdentityRole(roleName));
             }
         }
     }

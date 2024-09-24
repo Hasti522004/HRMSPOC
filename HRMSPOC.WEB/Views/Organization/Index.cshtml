@@ -1,34 +1,37 @@
-﻿@model List<HRMSPOC.WEB.Models.Organization>
-
-@{
-    ViewBag.Title = "Organizations";
-}
+﻿@model IEnumerable<HRMSPOC.WEB.Models.OrganizationViewModel>
 
 <h2>Organizations</h2>
 
-<a href="@Url.Action("Create")" class="btn btn-primary">Create New Organization</a>
+<a asp-action="Create" class="btn btn-primary">Create New Organization</a>
 
-<table class="table">
+<table class="table table-bordered mt-3">
     <thead>
         <tr>
-            <th>ID</th>
             <th>Name</th>
             <th>Address</th>
             <th>Actions</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var org in Model)
+        @if (Model != null && Model.Any())
+        {
+            foreach (var organization in Model)
+            {
+                <tr>
+                    <td>@organization.Name</td>
+                    <td>@organization.Address</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@organization.Id" class="btn btn-warning">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@organization.Id" class="btn btn-danger">Delete</a>
+                        <a asp-controller="Organization" asp-action="ManageHR" asp-route-organizationId="@organization.Id" class="btn btn-info">HR Management</a>
+                    </td>
+                </tr>
+            }
+        }
+        else
         {
             <tr>
-                <td>@org.Id</td>
-                <td>@org.Name</td>
-                <td>@org.Address</td>
-                <td>
-                    <a href="@Url.Action("Edit", new { id = org.Id })" class="btn btn-secondary">Edit</a>
-                    <a href="@Url.Action("Delete", new { id = org.Id })" class="btn btn-danger">Delete</a>
-                    <a href="@Url.Action("Index", "HR", new { organizationId = org.Id })" class="btn btn-info">Manage HR for @org.Name</a>
-                </td>
+                <td colspan="3" class="text-center">No organizations found.</td>
             </tr>
         }
     </tbody>

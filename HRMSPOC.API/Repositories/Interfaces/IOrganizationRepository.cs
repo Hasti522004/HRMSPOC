@@ -4,10 +4,11 @@ namespace HRMSPOC.API.Repositories.Interfaces
 {
     public interface IOrganizationRepository
     {
-        Task<IEnumerable<Organization>> GetAllAsync();
-        Task<Organization> GetByIdAsync(int id);
-        Task AddAsync(Organization organization);
-        Task UpdateAsync(Organization organization);
-        Task DeleteAsync(int id);
+        Task<IEnumerable<Organization>> GetOrganizationsAsync();
+        Task<Organization> GetOrganizationByIdAsync(Guid id);
+        Task<Organization> CreateOrganizationAsync(Organization organization);
+        Task UpdateOrganizationAsync(Organization organization);
+        Task DeleteOrganizationAsync(Guid id);
+        Task CreateAdminUserAsync(ApplicationUser adminUser, Guid organizationId);
     }
 }

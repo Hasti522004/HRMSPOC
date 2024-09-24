@@ -12,33 +12,6 @@ namespace HRMSPOC.WEB.Controllers
         {
             _authService = authService;
         }
-
-        [HttpGet]
-        public IActionResult Register()
-        {
-            return View();
-        }
-        [HttpPost]
-        public async Task<IActionResult> Register(RegisterDTO registerDTO)
-        {
-            if (ModelState.IsValid)
-            {
-                if (registerDTO.Password != registerDTO.ConfirmPassword)
-                {
-                    ModelState.AddModelError("", "Passwords do not match.");
-                    return View(registerDTO);
-                }
-
-                var token = await _authService.RegisterAsync(registerDTO);
-                if (!string.IsNullOrEmpty(token))
-                {
-                    return RedirectToAction("Login", "Account");
-                }
-                ModelState.AddModelError("", "Registration Failed. Please try again.");
-            }
-            return View(registerDTO);
-        }
-
         [HttpGet]
         public IActionResult Login()
         {
@@ -58,7 +31,7 @@ namespace HRMSPOC.WEB.Controllers
                     // Store token (e.g., in session, cookies)
                     HttpContext.Session.SetString("JWTToken", token);
 
-                    return RedirectToAction("Dashboard", "Admin");
+                    return RedirectToAction("Index", "Organization");
                 }
                 ModelState.AddModelError("", "Login failed.");
             }

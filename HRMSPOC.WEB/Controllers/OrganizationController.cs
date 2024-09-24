@@ -1,6 +1,7 @@
 ﻿using HRMSPOC.WEB.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -12,16 +13,17 @@ namespace HRMSPOC.WEB.Controllers
     {
         private readonly HttpClient _httpClient;
 
-        public OrganizationController()
+        public OrganizationController(HttpClient httpClient)
         {
-            _httpClient = new HttpClient();
+            _httpClient = httpClient;
         }
 
         // GET: Organization
-        public async Task<ActionResult> Index()
+        public async Task<IActionResult> Index()
         {
+            // Fetch organizations
             var response = await _httpClient.GetStringAsync("https://localhost:7095/api/Organization");
-            var organizations = JsonConvert.DeserializeObject<List<Organization>>(response);
+            var organizations = JsonConvert.DeserializeObject<List<OrganizationViewModel>>(response);
             return View(organizations);
         }
 
@@ -33,8 +35,7 @@ namespace HRMSPOC.WEB.Controllers
 
         // POST: Organization/Create
         [HttpPost]
-
-        public async Task<IActionResult> Create(Organization organization)
+        public async Task<IActionResult> Create(OrganizationViewModel organization)
         {
             if (ModelState.IsValid)
             {
@@ -47,19 +48,17 @@ namespace HRMSPOC.WEB.Controllers
             return View(organization);
         }
 
-
-        // GET: Organization/Edit/5
-        public async Task<IActionResult> Edit(int id)
+        // GET: Organization/Edit/{id}
+        public async Task<IActionResult> Edit(Guid id)
         {
             var response = await _httpClient.GetStringAsync($"https://localhost:7095/api/Organization/{id}");
-            var organization = JsonConvert.DeserializeObject<Organization>(response);
+            var organization = JsonConvert.DeserializeObject<OrganizationViewModel>(response);
             return View(organization);
         }
 
-        // POST: Organization/Edit/5
+        // POST: Organization/Edit/{id}
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Organization organization)
+        public async Task<IActionResult> Edit(Guid id, OrganizationViewModel organization)
         {
             if (ModelState.IsValid)
             {
@@ -72,19 +71,18 @@ namespace HRMSPOC.WEB.Controllers
             return View(organization);
         }
 
-        // GET: Organization/Delete/5
-        public async Task<IActionResult> Delete(int id)
+        // GET: Organization/Delete/{id}
+        public async Task<IActionResult> Delete(Guid id)
         {
             var response = await _httpClient.GetStringAsync($"https://localhost:7095/api/Organization/{id}");
-            var organization = JsonConvert.DeserializeObject<Organization>(response);
+            var organization = JsonConvert.DeserializeObject<OrganizationViewModel>(response);
             return View(organization);
         }
 
-        // POST: Organization/Delete/5
-        // POST: Organization/Delete/5
+        // POST: Organization/Delete/{id}
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             var response = await _httpClient.DeleteAsync($"https://localhost:7095/api/Organization/{id}");
             if (response.IsSuccessStatusCode)
@@ -94,5 +92,12 @@ namespace HRMSPOC.WEB.Controllers
             return View();
         }
 
+        // Redirect to manage HR while setting the organization ID
+        public IActionResult ManageHR(Guid organizationId)
+        {
+            // Set the OrganizationId in the session
+            HttpContext.Session.SetString("OrganizationId", organizationId.ToString());
+            return RedirectToAction("Index", "User"); // Redirect to User Index to manage users for the organization
+        }
     }
 }

@@ -23,39 +23,6 @@ namespace HRMSPOC.API.Repositories
             _roleManager = roleManager;
         }
 
-        public async Task<string> RegisterAsync(AuthDTO registerDto, string role)
-        {
-            var user = new ApplicationUser
-            {
-                UserName = registerDto.Email,
-                Email = registerDto.Email,
-                Role = role
-            };
-
-            if (!await _roleManager.RoleExistsAsync(role))
-            {
-                var roleResult = await _roleManager.CreateAsync(new IdentityRole(role));
-                if (!roleResult.Succeeded)
-                {
-                    throw new Exception("Role Creation Failed: " + string.Join(", ", roleResult.Errors.Select(e => e.Description)));
-                }
-            }
-
-            var result = await _userManager.CreateAsync(user, registerDto.Password);
-
-            if (!result.Succeeded)
-            {
-                throw new Exception("Registered Failed");
-            }
-            
-            // Assign the role to the user
-            var roleAssignResult = await _userManager.AddToRoleAsync(user, role);
-            if (!roleAssignResult.Succeeded)
-            {
-                throw new Exception($"Failed to assign role: {string.Join(", ", roleAssignResult.Errors.Select(e => e.Description))}");
-            }
-            return GenerateJwtToken(user);
-        }
         public async Task<string> LoginAsync(AuthDTO loginDto)
         {
             var user = await _userManager.FindByEmailAsync(loginDto.Email);
@@ -63,23 +30,24 @@ namespace HRMSPOC.API.Repositories
             {
                 throw new Exception("Invalid Credentials");
             }
-            return GenerateJwtToken(user);
-        }
-        public async Task<bool> UserExistsAsync(string email)
-        {
-            var user = await _userManager.FindByEmailAsync(email);
-            return user != null;
+            return await GenerateJwtToken(user); // Await token generation
         }
 
-        private string GenerateJwtToken(ApplicationUser user)
+        private async Task<string> GenerateJwtToken(ApplicationUser user)
         {
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.Role, user.Role)
+                new Claim(ClaimTypes.NameIdentifier, user.Id) // Include User ID
             };
 
+                   
+             var userRoles = await _userManager.GetRolesAsync(user);
+             foreach (var role in userRoles)
+             {
+                  claims.Add(new Claim(ClaimTypes.Role, role)); // Add each role as a claim
+             }
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
@@ -89,10 +57,9 @@ namespace HRMSPOC.API.Repositories
                 claims: claims,
                 expires: DateTime.Now.AddMinutes(30),
                 signingCredentials: creds
-            );
+             );
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
+             return new JwtSecurityTokenHandler().WriteToken(token);
         }
-
     }
 }
