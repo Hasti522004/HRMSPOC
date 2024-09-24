@@ -1,0 +1,43 @@
+﻿@model IEnumerable<HRMSPOC.WEB.Models.ApplicationUserViewModel>
+
+<h2>Manage Employees</h2>
+
+<a asp-action="Create" class="btn btn-primary">Create New Employee</a>
+
+<table class="table table-bordered mt-3">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th>Phone Number</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            foreach (var employee in Model)
+            {
+                <tr>
+                    <td>@employee.Id</td>
+                    <td>@employee.FirstName</td>
+                    <td>@employee.LastName</td>
+                    <td>@employee.Email</td>
+                    <td>@employee.PhoneNumber</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@employee.Id" class="btn btn-warning">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@employee.Id" class="btn btn-danger">Delete</a>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="6" class="text-center">No employees found.</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -30,7 +30,7 @@
                     <td>
                         <a asp-action="Edit" asp-route-id="@hr.Id" class="btn btn-warning">Edit</a>
                         <a asp-action="Delete" asp-route-id="@hr.Id" class="btn btn-danger">Delete</a>
-                        <a asp-action="ManageEmployees" asp-route-hrId="@hr.Id" class="btn btn-info">Manage Employees</a>
+                        <a asp-action="SetHRId" asp-controller="Employee" asp-route-hrId="@hr.Id" class="btn btn-info">Manage Employees</a>
                     </td>
                 </tr>
             }

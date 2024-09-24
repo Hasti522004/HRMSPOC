@@ -5,11 +5,11 @@ using HRMSPOC.WEB.DTOs;
 
 namespace HRMSPOC.WEB.Controllers
 {
-    public class UserController : Controller
+    public class HRController : Controller
     {
         private readonly HttpClient _httpClient;
 
-        public UserController(HttpClient httpClient)
+        public HRController(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }
@@ -18,7 +18,7 @@ namespace HRMSPOC.WEB.Controllers
         public IActionResult SetOrganizationId(Guid organizationId)
         {
             HttpContext.Session.SetString("OrganizationId", organizationId.ToString());
-            return RedirectToAction("Index", "User"); // Redirect to User Index
+            return RedirectToAction("Index", "HR"); // Redirect to User Index
         }
 
         // Private method to retrieve OrganizationId from session
@@ -44,7 +44,7 @@ namespace HRMSPOC.WEB.Controllers
                 ViewBag.OrganizationId = organizationId.Value; // Pass the organization ID to the view
                 return View(users);
             }
-            return RedirectToAction("Index", "User"); // Redirect if no organization ID is found
+            return RedirectToAction("Index", "HR"); // Redirect if no organization ID is found
         }
 
         // GET: User/Create
@@ -56,7 +56,7 @@ namespace HRMSPOC.WEB.Controllers
                 ViewBag.OrganizationId = organizationId.Value;
                 return View();
             }
-            return RedirectToAction("Index", "User"); // Redirect if no organization ID is found
+            return RedirectToAction("Index", "HR"); // Redirect if no organization ID is found
         }
 
         // POST: User/Create
@@ -75,7 +75,7 @@ namespace HRMSPOC.WEB.Controllers
                     var response = await _httpClient.PostAsJsonAsync("https://localhost:7095/api/User", user);
                     if (response.IsSuccessStatusCode)
                     {
-                        return RedirectToAction("Index"); // Redirect to Index
+                        return RedirectToAction("Index","HR"); // Redirect to Index
                     }
                 }
             }
@@ -118,7 +118,7 @@ namespace HRMSPOC.WEB.Controllers
                 var response = await _httpClient.PutAsJsonAsync($"https://localhost:7095/api/User", userDto);
                 if (response.IsSuccessStatusCode)
                 {
-                    return RedirectToAction("Index"); // Redirect to Index
+                    return RedirectToAction("Index","HR"); // Redirect to Index
                 }
             }
             return View(userDto); // Return the DTO back to the view if validation fails
