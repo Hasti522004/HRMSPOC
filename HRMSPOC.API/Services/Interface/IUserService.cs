@@ -12,7 +12,7 @@ namespace HRMSPOC.API.Services.Interface
         Task<ApplicationUser> CreateUserAsync(ApplicationUser user);
         Task UpdateUserAsync(ApplicationUser user);
         Task DeleteUserAsync(string id);
-        Task<IEnumerable<ApplicationUser>> GetUsersByOrganizationIdAsync(Guid organizationId);
+        Task<IEnumerable<ApplicationUser>> GetUsersByCreatedByIdAsync(Guid createdbyId);
 
     }
 }

@@ -81,10 +81,10 @@ namespace HRMSPOC.API.Repositories
                 await _userManager.DeleteAsync(user);
             }
         }
-        public async Task<IEnumerable<ApplicationUser>> GetUsersByOrganizationIdAsync(Guid organizationId)
+        public async Task<IEnumerable<ApplicationUser>> GetUsersByCreatedByIdAsync(Guid createdbyId)
         {
             return await _userManager.Users
-                .Where(u => u.CreatedBy == organizationId)
+                .Where(u => u.CreatedBy == createdbyId)
                 .ToListAsync();
         }
 

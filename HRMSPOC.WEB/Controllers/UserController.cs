@@ -39,7 +39,7 @@ namespace HRMSPOC.WEB.Controllers
             if (organizationId.HasValue)
             {
                 // Fetch users for the specific organization
-                var response = await _httpClient.GetStringAsync($"https://localhost:7095/api/User/organization/{organizationId.Value}");
+                var response = await _httpClient.GetStringAsync($"https://localhost:7095/api/User/createdby/{organizationId.Value}");
                 var users = JsonConvert.DeserializeObject<List<ApplicationUserViewModel>>(response);
                 ViewBag.OrganizationId = organizationId.Value; // Pass the organization ID to the view
                 return View(users);

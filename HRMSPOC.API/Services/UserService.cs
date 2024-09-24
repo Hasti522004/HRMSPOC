@@ -40,9 +40,9 @@ namespace HRMSPOC.API.Services
         {
             await _userRepository.DeleteUserAsync(id);
         }
-        public async Task<IEnumerable<ApplicationUser>> GetUsersByOrganizationIdAsync(Guid organizationId)
+        public async Task<IEnumerable<ApplicationUser>> GetUsersByCreatedByIdAsync(Guid createdbyId)
         {
-            return await _userRepository.GetUsersByOrganizationIdAsync(organizationId);
+            return await _userRepository.GetUsersByCreatedByIdAsync(createdbyId);
         }
 
     }

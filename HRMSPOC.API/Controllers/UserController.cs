@@ -1,9 +1,6 @@
 ﻿using HRMSPOC.API.Models;
 using HRMSPOC.API.Services.Interface;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace HRMSPOC.API.Controllers
 {
@@ -80,10 +77,10 @@ namespace HRMSPOC.API.Controllers
             await _userService.DeleteUserAsync(id);
             return NoContent();
         }
-        [HttpGet("organization/{organizationId}")]
-        public async Task<ActionResult<IEnumerable<ApplicationUser>>> GetUsersByOrganizationId(Guid organizationId)
+        [HttpGet("createdby/{createdbyId}")]
+        public async Task<ActionResult<IEnumerable<ApplicationUser>>> GetUsersByCreatedById(Guid createdbyId)
         {
-            var users = await _userService.GetUsersByOrganizationIdAsync(organizationId);
+            var users = await _userService.GetUsersByCreatedByIdAsync(createdbyId);
             return Ok(users);
         }
     }
