@@ -1,4 +1,5 @@
 ﻿using HRMSPOC.API.Services.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HRMSPOC.API.Controllers
@@ -16,6 +17,7 @@ namespace HRMSPOC.API.Controllers
 
         // GET: api/UserOrganization/organization/{userId}
         [HttpGet("organization/{userId}")]
+        [Authorize]
         public async Task<IActionResult> GetOrganizationIdByUserId(string userId)
         {
             var organizationId = await _userOrganizationService.GetOrganizationIdByUserIdAsync(userId);
@@ -29,6 +31,7 @@ namespace HRMSPOC.API.Controllers
         }
         [HttpPost]
         [Route("add")]
+        [Authorize(Roles = "SuperAdmin,Admin,HR")] // Allow access to SuperAdmin, Admin, and HR roles
         public async Task<IActionResult> AddUserToOrganization(string userId, Guid organizationId)
         {
             if (string.IsNullOrEmpty(userId) || organizationId == Guid.Empty)

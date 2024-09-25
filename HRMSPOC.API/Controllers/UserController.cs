@@ -1,5 +1,6 @@
 ﻿using HRMSPOC.API.Models;
 using HRMSPOC.API.Services.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HRMSPOC.API.Controllers
@@ -17,6 +18,7 @@ namespace HRMSPOC.API.Controllers
 
         // Get all users
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<ApplicationUser>>> GetAllUsers()
         {
             var users = await _userService.GetUsersAsync();
@@ -25,6 +27,7 @@ namespace HRMSPOC.API.Controllers
 
         // Get user by ID (string from IdentityUser)
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<ApplicationUser>> GetUserById(string id)
         {
             var user = await _userService.GetUserByIdAsync(id);
@@ -37,6 +40,8 @@ namespace HRMSPOC.API.Controllers
 
         // Create new user
         [HttpPost]
+        [Authorize(Roles = "SuperAdmin,Admin,HR")] // Restrict access to specific roles
+
         public async Task<ActionResult<ApplicationUser>> CreateUser([FromBody] ApplicationUser user)
         {
             if (user == null)
@@ -49,6 +54,8 @@ namespace HRMSPOC.API.Controllers
 
         // Update user (with string ID)
         [HttpPut]
+        [Authorize(Roles = "SuperAdmin,Admin,HR")] // Restrict access to specific roles
+
         public async Task<ActionResult> UpdateUser([FromBody] ApplicationUser user)
         {
             if (user == null || string.IsNullOrEmpty(user.Id))
@@ -72,12 +79,15 @@ namespace HRMSPOC.API.Controllers
 
         // Delete user (with string ID)
         [HttpDelete("{id}")]
+        [Authorize(Roles = "SuperAdmin,Admin,HR")] // Restrict access to specific roles
+
         public async Task<ActionResult> DeleteUser(string id)
         {
             await _userService.DeleteUserAsync(id);
             return NoContent();
         }
         [HttpGet("createdby/{createdbyId}")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<ApplicationUser>>> GetUsersByCreatedById(Guid createdbyId)
         {
             var users = await _userService.GetUsersByCreatedByIdAsync(createdbyId);
