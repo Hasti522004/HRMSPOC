@@ -55,7 +55,9 @@ namespace HRMSPOC.API.Repositories
 
         public async Task CreateAdminUserAsync(ApplicationUser adminUser, Guid organizationId)
         {
-            var result = await _userManager.CreateAsync(adminUser);
+            string adminPassword = $"Admin@{adminUser.LastName.Replace(" ", "").ToLower()}123";
+
+            var result = await _userManager.CreateAsync(adminUser,adminPassword);
             if (result.Succeeded)
             {
                 var userOrg = new UserOrganization

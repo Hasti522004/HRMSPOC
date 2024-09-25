@@ -36,7 +36,8 @@ namespace HRMSPOC.WEB.Controllers
         // GET: User/Index
         public async Task<IActionResult> Index()
         {
-            var HrId = GetHrIdFromSession();
+             var HrId = GetHrIdFromSession();
+     
             if (HrId.HasValue)
             {
                 // Fetch users for the specific organization

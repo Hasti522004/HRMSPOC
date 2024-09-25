@@ -70,12 +70,14 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IOrganizationRepository, OrganizationRepository>();
+builder.Services.AddScoped<IUserOrganizationRepository, UserOrganizationRepository>();
 
 // Register Services
 builder.Services.AddScoped<DataSeeder>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IOrganizationService, OrganizationService>();
+builder.Services.AddScoped<IUserOrganizationService, UserOrganizationService>();
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
