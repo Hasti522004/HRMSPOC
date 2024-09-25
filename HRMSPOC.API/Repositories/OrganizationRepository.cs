@@ -73,5 +73,10 @@ namespace HRMSPOC.API.Repositories
                 throw new Exception("Failed to create admin user.");
             }
         }
+
+        public async Task<bool> IsOrganizationExists(Guid id)
+        {
+            return await _context.Organization.AnyAsync(o => o.Id == id);
+        }
     }
 }

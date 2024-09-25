@@ -27,5 +27,17 @@ namespace HRMSPOC.API.Controllers
 
             return Ok(new { OrganizationId = organizationId.Value });
         }
+        [HttpPost]
+        [Route("add")]
+        public async Task<IActionResult> AddUserToOrganization(string userId, Guid organizationId)
+        {
+            if (string.IsNullOrEmpty(userId) || organizationId == Guid.Empty)
+            {
+                return BadRequest("User ID and Organization ID cannot be empty.");
+            }
+
+            bool isCreated = await _userOrganizationService.AddUserOrganizationAsync(userId, organizationId);
+            return Ok("User successfully added to organization.");
+        }
     }
 }

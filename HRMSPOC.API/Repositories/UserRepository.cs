@@ -13,7 +13,7 @@ namespace HRMSPOC.API.Repositories
     {
         private readonly HRMSDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
-
+        
         public UserRepository(HRMSDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
@@ -34,11 +34,16 @@ namespace HRMSPOC.API.Repositories
         {
             user.UserName = user.Email;
             var result = await _userManager.CreateAsync(user);
+            if(user.CreatedBy != Guid.Empty)
+            {
+                var createdById = user.CreatedBy.ToString();
+            }
             if (result.Succeeded)
             {
                 return user;
             }
             throw new Exception("User creation failed: " + string.Join(", ", result.Errors));
+
         }
 
         public async Task UpdateUserAsync(ApplicationUser user)

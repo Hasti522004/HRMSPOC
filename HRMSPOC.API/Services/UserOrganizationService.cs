@@ -16,5 +16,9 @@ namespace HRMSPOC.API.Services
         {
             return await _userOrganizationRepository.GetOrganizationIdByUserIdAsync(userId);
         }
+        public async Task<bool> AddUserOrganizationAsync(string userId, Guid organizationId)
+        {
+            return await _userOrganizationRepository.AddUserOrganizationAsync(userId, organizationId);
+        }
     }
 }

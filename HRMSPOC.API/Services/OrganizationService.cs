@@ -76,5 +76,10 @@ namespace HRMSPOC.API.Services
 
             return createdOrganization;
         }
+
+        public async Task<bool> IsOrganizationExists(Guid id)
+        {
+            return await _organizationRepository.IsOrganizationExists(id);
+        }
     }
 }

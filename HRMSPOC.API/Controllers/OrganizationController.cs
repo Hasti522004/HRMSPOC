@@ -72,5 +72,12 @@ namespace HRMSPOC.API.Controllers
             await _organizationService.DeleteOrganizationAsync(id);
             return NoContent();
         }
+
+        [HttpGet("IsOrganizationExist/{id:guid}")]
+        public async Task<bool> IsOrganizationExists(Guid id)
+        {
+            bool isorgExist = await _organizationService.IsOrganizationExists(id);
+            return isorgExist;
+        }
     }
 }

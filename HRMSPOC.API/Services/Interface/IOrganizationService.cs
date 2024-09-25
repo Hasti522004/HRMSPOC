@@ -10,5 +10,7 @@ namespace HRMSPOC.API.Services.Interface
         Task UpdateOrganizationAsync(Organization organization);
         Task DeleteOrganizationAsync(Guid id);
         Task<Organization> CreateOrganizationWithAdminAsync(Organization organization, Guid superAdminId);
+        Task<bool> IsOrganizationExists(Guid id);
+
     }
 }
