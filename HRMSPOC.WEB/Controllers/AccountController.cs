@@ -43,6 +43,10 @@ namespace HRMSPOC.WEB.Controllers
                     // Retrieve roles from claims
                     var roles = jwtToken.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
                     var userId = jwtToken.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+                    if (!string.IsNullOrEmpty(userId))
+                    {
+                        HttpContext.Session.SetString("UserId", userId);
+                    }
 
                     // Optionally, store roles in session or do something else with them
                     HttpContext.Session.SetString("UserRoles", string.Join(",", roles));

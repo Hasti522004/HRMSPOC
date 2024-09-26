@@ -31,7 +31,7 @@ namespace HRMSPOC.API.Controllers
         }
         [HttpPost]
         [Route("add")]
-        [Authorize(Roles = "SuperAdmin,Admin,HR")] // Allow access to SuperAdmin, Admin, and HR roles
+        [Authorize(Roles = "SuperAdmin,Admin")]
         public async Task<IActionResult> AddUserToOrganization(string userId, Guid organizationId)
         {
             if (string.IsNullOrEmpty(userId) || organizationId == Guid.Empty)
