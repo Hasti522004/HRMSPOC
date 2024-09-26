@@ -2,15 +2,14 @@
 using HRMSPOC.API.Services.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace HRMSPOC.API.Controllers
 {
+    // [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Policy = "SuperAdminOnly")]
+    [Authorize(Roles = "SuperAdmin")]
+
     public class OrganizationController : ControllerBase
     {
         private readonly IOrganizationService _organizationService;

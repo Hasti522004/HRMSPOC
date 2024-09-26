@@ -39,14 +39,14 @@ namespace HRMSPOC.API.Repositories
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.NameIdentifier, user.Id) // Include User ID
+                new Claim(ClaimTypes.NameIdentifier, user.Id)
             };
 
                    
              var userRoles = await _userManager.GetRolesAsync(user);
              foreach (var role in userRoles)
              {
-                  claims.Add(new Claim(ClaimTypes.Role, role)); // Add each role as a claim
+                  claims.Add(new Claim(ClaimTypes.Role, role));
              }
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

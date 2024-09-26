@@ -1,81 +1,75 @@
 ﻿using HRMSPOC.WEB.DTOs;
 using HRMSPOC.WEB.Models;
+using HRMSPOC.WEB.Services;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace HRMSPOC.WEB.Controllers
 {
     public class EmployeeController : Controller
     {
-        private readonly HttpClient _httpClient;
+        private readonly EmployeeService _employeeService;
 
-        public EmployeeController(HttpClient httpClient)
+        public EmployeeController(EmployeeService employeeService)
         {
-            _httpClient = httpClient;
+            _employeeService = employeeService;
         }
 
         // GET: HR/SetHRId/{HrId}
-        public IActionResult SetHRId(Guid HrId)
+        public IActionResult SetHRId(Guid hrId)
         {
-            HttpContext.Session.SetString("HrId", HrId.ToString());
-            return RedirectToAction("Index", "Employee"); // Redirect to User Index
+            HttpContext.Session.SetString("HrId", hrId.ToString());
+            return RedirectToAction("Index", "Employee"); // Redirect to Employee Index
         }
 
         // Private method to retrieve HrId from session
         private Guid? GetHrIdFromSession()
         {
             var hrIdString = HttpContext.Session.GetString("HrId");
-            if (Guid.TryParse(hrIdString, out var HrId))
+            if (Guid.TryParse(hrIdString, out var hrId))
             {
-                return HrId;
+                return hrId;
             }
             return null; // Return null if the ID is not found or not valid
         }
 
-
-        // GET: User/Index
+        // GET: Employee/Index
         public async Task<IActionResult> Index()
         {
-             var HrId = GetHrIdFromSession();
-     
-            if (HrId.HasValue)
+            var hrId = GetHrIdFromSession();
+
+            if (hrId.HasValue)
             {
-                // Fetch users for the specific organization
-                var response = await _httpClient.GetStringAsync($"https://localhost:7095/api/User/createdby/{HrId.Value}");
-                var users = JsonConvert.DeserializeObject<List<ApplicationUserViewModel>>(response);
-                ViewBag.HrId = HrId.Value; // Pass the organization ID to the view
+                var users = await _employeeService.GetUsersByHrIdAsync(hrId.Value);
+                ViewBag.HrId = hrId.Value; // Pass the HR ID to the view
                 return View(users);
             }
-            return RedirectToAction("Index", "Employee"); // Redirect if no organization ID is found
+            return RedirectToAction("Index", "Employee"); // Redirect if no HR ID is found
         }
 
-        // GET: User/Create
+        // GET: Employee/Create
         public IActionResult Create()
         {
-            var organizationId = GetHrIdFromSession();
-            if (organizationId.HasValue)
+            var hrId = GetHrIdFromSession();
+            if (hrId.HasValue)
             {
-                ViewBag.OrganizationId = organizationId.Value;
+                ViewBag.HrId = hrId.Value;
                 return View();
             }
-            return RedirectToAction("Index", "Employee"); // Redirect if no organization ID is found
+            return RedirectToAction("Index", "Employee"); // Redirect if no HR ID is found
         }
 
-        // POST: User/Create
+        // POST: Employee/Create
         [HttpPost]
         public async Task<IActionResult> Create(ApplicationUserViewModel user)
         {
             var hrId = GetHrIdFromSession();
             if (hrId.HasValue)
             {
-                // Set CreatedBy field
-                user.CreatedBy = hrId.Value;
+                user.CreatedBy = hrId.Value; // Set CreatedBy field
 
                 if (ModelState.IsValid)
                 {
-                    // Send the object without Id to the API
-                    var response = await _httpClient.PostAsJsonAsync("https://localhost:7095/api/User", user);
-                    if (response.IsSuccessStatusCode)
+                    if (await _employeeService.CreateUserAsync(user))
                     {
                         return RedirectToAction("Index", "Employee"); // Redirect to Index
                     }
@@ -84,41 +78,30 @@ namespace HRMSPOC.WEB.Controllers
             return View(user);
         }
 
-        // GET: User/Edit/{id}
+        // GET: Employee/Edit/{id}
         public async Task<IActionResult> Edit(string id)
         {
-            var response = await _httpClient.GetAsync($"https://localhost:7095/api/User/{id}");
-            if (response.IsSuccessStatusCode)
+            var userDto = await _employeeService.GetUserByIdAsync(id);
+            if (userDto != null)
             {
-                var responseContent = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"Response Content: {responseContent}");
-
-                // Deserialize to ApplicationUserDto
-                var userDto = JsonConvert.DeserializeObject<ApplicationUserDto>(responseContent);
-
-                // Include the ID in ViewBag for the POST method
                 ViewBag.UserId = id; // Store the UserId to use in POST action
-
                 return View(userDto); // Return the DTO to the view
             }
             return NotFound();
         }
 
-        // POST: User/Edit/{id}
+        // POST: Employee/Edit/{id}
         [HttpPost]
         public async Task<IActionResult> Edit(ApplicationUserDto userDto)
         {
             if (ModelState.IsValid)
             {
-                // Ensure the userId is correctly passed
                 if (string.IsNullOrEmpty(userDto.Id))
                 {
                     return BadRequest("User ID cannot be null or empty.");
                 }
 
-                // Send the DTO in the PUT request
-                var response = await _httpClient.PutAsJsonAsync($"https://localhost:7095/api/User", userDto);
-                if (response.IsSuccessStatusCode)
+                if (await _employeeService.UpdateUserAsync(userDto))
                 {
                     return RedirectToAction("Index", "Employee"); // Redirect to Index
                 }
@@ -126,27 +109,25 @@ namespace HRMSPOC.WEB.Controllers
             return View(userDto); // Return the DTO back to the view if validation fails
         }
 
-        // GET: User/Delete/{id}
+        // GET: Employee/Delete/{id}
         public async Task<IActionResult> Delete(Guid id)
         {
-            var response = await _httpClient.GetAsync($"https://localhost:7095/api/User/{id}");
-            if (response.IsSuccessStatusCode)
+            var user = await _employeeService.GetUserToDeleteAsync(id);
+            if (user != null)
             {
-                var user = JsonConvert.DeserializeObject<ApplicationUserViewModel>(await response.Content.ReadAsStringAsync());
                 return View(user);
             }
             return NotFound();
         }
 
-        // POST: User/DeleteConfirmed/{id}
+        // POST: Employee/DeleteConfirmed/{id}
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var response = await _httpClient.DeleteAsync($"https://localhost:7095/api/User/{id}");
-            if (response.IsSuccessStatusCode)
+            if (await _employeeService.DeleteUserAsync(id))
             {
-                var hrId = GetHrIdFromSession(); // Use the session to get the OrganizationId
+                var hrId = GetHrIdFromSession(); // Use the session to get the HrId
                 if (hrId.HasValue)
                 {
                     return RedirectToAction("Index", new { hrId = hrId.Value }); // Redirect to Index

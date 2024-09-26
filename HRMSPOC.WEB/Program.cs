@@ -8,6 +8,21 @@ builder.Services.AddHttpClient<AuthService>(client =>
     client.BaseAddress = new Uri("https://localhost:7095");
 })
 .AddHttpMessageHandler<AuthHttpClientHandler>();
+builder.Services.AddHttpClient<OrganizationService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7095");
+})
+.AddHttpMessageHandler<AuthHttpClientHandler>();
+builder.Services.AddHttpClient<UserService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7095");
+})
+.AddHttpMessageHandler<AuthHttpClientHandler>();
+builder.Services.AddHttpClient<EmployeeService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7095");
+})
+.AddHttpMessageHandler<AuthHttpClientHandler>();
 
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddTransient<AuthHttpClientHandler>();
@@ -25,13 +40,13 @@ builder.Services.AddAuthentication("Bearer")
         options.Audience = "api";
     });
 
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("SuperAdminOnly", policy => policy.RequireRole("SuperAdmin"));
-    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
-    options.AddPolicy("HROnly", policy => policy.RequireRole("HR"));
-    options.AddPolicy("EmployeeOnly", policy => policy.RequireRole("Employee"));
-});
+//builder.Services.AddAuthorization(options =>
+//{
+//    options.AddPolicy("SuperAdminOnly", policy => policy.RequireRole("SuperAdmin"));
+//    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+//    options.AddPolicy("HROnly", policy => policy.RequireRole("HR"));
+//    options.AddPolicy("EmployeeOnly", policy => policy.RequireRole("Employee"));
+//});
 
 var app = builder.Build();
 
