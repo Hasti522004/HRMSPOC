@@ -12,36 +12,21 @@
     <h4>@Model.FirstName @Model.LastName</h4>
     <hr />
     <dl class="row">
-        <dt class="col-sm-2">
-            Email
-        </dt>
-        <dd class="col-sm-10">
-            @Model.Email
-        </dd>
+        <dt class="col-sm-2">Email</dt>
+        <dd class="col-sm-10">@Model.Email</dd>
 
-        <dt class="col-sm-2">
-            Phone Number
-        </dt>
-        <dd class="col-sm-10">
-            @Model.PhoneNumber
-        </dd>
+        <dt class="col-sm-2">Phone Number</dt>
+        <dd class="col-sm-10">@Model.PhoneNumber</dd>
 
-        <dt class="col-sm-2">
-            Address
-        </dt>
-        <dd class="col-sm-10">
-            @Model.Address
-        </dd>
+        <dt class="col-sm-2">Address</dt>
+        <dd class="col-sm-10">@Model.Address</dd>
 
-        <dt class="col-sm-2">
-            Role
-        </dt>
-        <dd class="col-sm-10">
-            @Model.RoleName
-        </dd>
+        <dt class="col-sm-2">Role</dt>
+        <dd class="col-sm-10">@Model.RoleName</dd>
     </dl>
 
-    <form asp-action="Delete" method="post">
+    <form asp-action="DeleteConfirmed" method="post">
+        <!-- Changed to DeleteConfirmed -->
         <input type="hidden" asp-for="Id" />
         <button type="submit" class="btn btn-danger">Delete</button>
         <a asp-action="Index" class="btn btn-secondary">Cancel</a>

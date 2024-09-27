@@ -1,4 +1,5 @@
-﻿using HRMSPOC.WEB.ViewModel;
+﻿using HRMSPOC.WEB.Models;
+using HRMSPOC.WEB.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -11,10 +12,12 @@ namespace HRMSPOC.WEB.Services
     public class DashboardService
     {
         private readonly HttpClient _httpClient;
+        private readonly IHttpContextAccessor _httpContextAccessor;  // Added for session access
 
-        public DashboardService(HttpClient httpClient)
+        public DashboardService(HttpClient httpClient, IHttpContextAccessor httpContextAccessor)
         {
             _httpClient = httpClient;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<IEnumerable<UserViewModel>> GetUsersByOrganizationIdAsync(Guid organizationId)
@@ -57,11 +60,13 @@ namespace HRMSPOC.WEB.Services
 
             return new List<UserViewModel>();
         }
-        public async Task<bool> CreateUserAsync(UserViewModel newUser)
+        public async Task<bool> CreateUserAsync(ApplicationUserViewModel newUser, string role)
         {
-            var response = await _httpClient.PostAsJsonAsync("https://localhost:7095/api/user/{newUser.RoleName}", newUser);
-            return response.IsSuccessStatusCode;
+              // Insert the role into the API endpoint URL
+              var response = await _httpClient.PostAsJsonAsync($"https://localhost:7095/api/user/{role}", newUser);
+              return response.IsSuccessStatusCode;
         }
+
 
         // Edit User
         public async Task<bool> EditUserAsync(UserViewModel updatedUser)
@@ -75,6 +80,11 @@ namespace HRMSPOC.WEB.Services
         {
             var response = await _httpClient.DeleteAsync($"https://localhost:7095/api/user/{userId}");
             return response.IsSuccessStatusCode;
+        }
+
+        internal Task GetUsersByOrganizationIdAsync(string? orgId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

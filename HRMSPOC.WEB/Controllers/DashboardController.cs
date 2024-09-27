@@ -1,8 +1,10 @@
-﻿using HRMSPOC.WEB.Services;
+﻿using HRMSPOC.WEB.Models;
+using HRMSPOC.WEB.Services;
 using HRMSPOC.WEB.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace HRMSPOC.WEB.Controllers
@@ -26,6 +28,13 @@ namespace HRMSPOC.WEB.Controllers
 
                 // Call the service to get users by organization ID
                 var users = await _dashboardService.GetUsersByOrganizationIdAsync(organizationId);
+                var adminUser = users.FirstOrDefault(u => u.RoleName == "Admin");
+
+                if (adminUser != null)
+                {
+                    // Store the Admin user's Id in the session as CreatedById
+                    HttpContext.Session.SetString("CreatedById", adminUser.Id);
+                }
                 return View(users);
             }
 
@@ -41,32 +50,42 @@ namespace HRMSPOC.WEB.Controllers
 
         // POST: Create new user
         [HttpPost]
-        public async Task<IActionResult> Create(UserViewModel newUser)
+        public async Task<IActionResult> Create(ApplicationUserViewModel newUser)
         {
             if (ModelState.IsValid)
             {
-                var success = await _dashboardService.CreateUserAsync(newUser);
-                if (success)
+                if (HttpContext.Session.TryGetValue("CreatedById", out var createdByIdBytes))
                 {
-                    return RedirectToAction("Index");
+                    var createdByIdString = System.Text.Encoding.UTF8.GetString(createdByIdBytes);
+                    var createdById = Guid.Parse(createdByIdString); // Convert the string back to Guid
+                    newUser.CreatedBy = createdById;
+
+                    string role = newUser.RoleName;
+                    var success = await _dashboardService.CreateUserAsync(newUser, role);
+                    if (success)
+                    {
+                        return RedirectToAction("Index");
+                    }
                 }
             }
 
-            // If creation fails, return the view with validation errors
             return View(newUser);
         }
-
-        // GET: Edit user view
         public async Task<IActionResult> Edit(string id)
         {
-            var users = await _dashboardService.GetUsersByOrganizationIdAsync(Guid.NewGuid()); // You may want to replace Guid.NewGuid() with a valid organizationId if needed
-            var user = users.FirstOrDefault(u => u.Id == id);
-            if (user == null)
+            if (HttpContext.Session.TryGetValue("OrganizationId", out var orgIdBytes))
             {
-                return NotFound();
-            }
+                var organizationId = new Guid(orgIdBytes);
+                var users = await _dashboardService.GetUsersByOrganizationIdAsync(organizationId); // You may want to replace Guid.NewGuid() with a valid organizationId if needed
+                var user = users.FirstOrDefault(u => u.Id == id);
+                if (user == null)
+                {
+                    return NotFound();
+                }
 
-            return View(user);
+                return View(user);
+            }
+            return NotFound();
         }
 
         // POST: Edit user
@@ -86,9 +105,26 @@ namespace HRMSPOC.WEB.Controllers
             return View(updatedUser);
         }
 
-        // POST: Delete user
-        [HttpPost]
         public async Task<IActionResult> Delete(Guid id)
+        {
+            if (HttpContext.Session.TryGetValue("OrganizationId", out var orgIdBytes))
+            {
+                var organizationId = new Guid(orgIdBytes);
+
+                var users = await _dashboardService.GetUsersByOrganizationIdAsync(organizationId);
+                var user = users.FirstOrDefault(u => u.Id == id.ToString());
+                if (user == null)
+                {
+                    return NotFound();
+                }
+                return View(user);
+            }
+
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteConfirmed(Guid id)  // Update this method name to avoid confusion
         {
             var success = await _dashboardService.DeleteUserAsync(id);
             if (success)
@@ -96,7 +132,6 @@ namespace HRMSPOC.WEB.Controllers
                 return RedirectToAction("Index");
             }
 
-            // If deletion fails, return an error view or handle accordingly
             return View("Error");
         }
     }

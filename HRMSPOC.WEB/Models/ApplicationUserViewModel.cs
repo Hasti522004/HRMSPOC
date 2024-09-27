@@ -29,5 +29,6 @@
         [Required(ErrorMessage = "Password is required.")]
         [StringLength(100, ErrorMessage = "Password must be at least {2} characters long.", MinimumLength = 6)]
         public string Password { get; set; }
+        public string? RoleName { get; set; }
     }
 }

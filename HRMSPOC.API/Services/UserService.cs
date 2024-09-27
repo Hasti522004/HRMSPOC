@@ -51,6 +51,13 @@ namespace HRMSPOC.API.Services
                     if (!string.IsNullOrEmpty(role))
                     {
                         await _userManager.AddToRoleAsync(result, role);
+                        var organizationId = await _userOrganizationRepository.GetOrganizationIdByUserIdAsync(createdById.ToString());
+                        if (organizationId.HasValue)
+                        {
+                            // Associate user with the organization
+                            await _userOrganizationRepository.AddUserOrganizationAsync(result.Id, organizationId.Value);
+                        }
+
                     }
                     else if (isOrganization)
                     {
