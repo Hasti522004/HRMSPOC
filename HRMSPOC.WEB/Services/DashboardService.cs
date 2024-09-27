@@ -57,5 +57,24 @@ namespace HRMSPOC.WEB.Services
 
             return new List<UserViewModel>();
         }
+        public async Task<bool> CreateUserAsync(UserViewModel newUser)
+        {
+            var response = await _httpClient.PostAsJsonAsync("https://localhost:7095/api/user/{newUser.RoleName}", newUser);
+            return response.IsSuccessStatusCode;
+        }
+
+        // Edit User
+        public async Task<bool> EditUserAsync(UserViewModel updatedUser)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"https://localhost:7095/api/user", updatedUser);
+            return response.IsSuccessStatusCode;
+        }
+
+        // Delete User
+        public async Task<bool> DeleteUserAsync(Guid userId)
+        {
+            var response = await _httpClient.DeleteAsync($"https://localhost:7095/api/user/{userId}");
+            return response.IsSuccessStatusCode;
+        }
     }
 }

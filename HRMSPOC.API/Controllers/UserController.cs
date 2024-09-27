@@ -40,16 +40,16 @@ namespace HRMSPOC.API.Controllers
         }
 
         // Create new user
-        [HttpPost]
+        [HttpPost("{role}")]
         [Authorize(Roles = "SuperAdmin,Admin,HR")] // Restrict access to specific roles
 
-        public async Task<ActionResult<ApplicationUser>> CreateUser([FromBody] ApplicationUser user)
+        public async Task<ActionResult<ApplicationUser>> CreateUser([FromBody] ApplicationUser user,string role)
         {
             if (user == null)
             {
                 return BadRequest("User data is required.");
             }
-            var createdUser = await _userService.CreateUserAsync(user);
+            var createdUser = await _userService.CreateUserAsync(user,role);
             return CreatedAtAction(nameof(GetUserById), new { id = createdUser.Id }, createdUser);
         }
 

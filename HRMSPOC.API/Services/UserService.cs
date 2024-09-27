@@ -33,7 +33,7 @@ namespace HRMSPOC.API.Services
             return await _userRepository.GetUserByIdAsync(id);
         }
 
-        public async Task<ApplicationUser> CreateUserAsync(ApplicationUser user)
+        public async Task<ApplicationUser> CreateUserAsync(ApplicationUser user, string role)
         {
             // Validate the CreatedBy field
             if (user.CreatedBy != Guid.Empty)
@@ -48,7 +48,11 @@ namespace HRMSPOC.API.Services
 
                 if (result != null) // Ensure user creation was successful
                 {
-                    if (isOrganization)
+                    if (!string.IsNullOrEmpty(role))
+                    {
+                        await _userManager.AddToRoleAsync(result, role);
+                    }
+                    else if (isOrganization)
                     {
                         // Assign the HR role
                         await _userManager.AddToRoleAsync(result, "HR");
@@ -69,7 +73,7 @@ namespace HRMSPOC.API.Services
                     }
                 }
 
-                return result; // Return the created user
+                return result;
             }
 
             // If CreatedBy is empty, just create the user
