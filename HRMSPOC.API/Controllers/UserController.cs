@@ -1,4 +1,5 @@
-﻿using HRMSPOC.API.Models;
+﻿using HRMSPOC.API.DTOs;
+using HRMSPOC.API.Models;
 using HRMSPOC.API.Services.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -93,5 +94,17 @@ namespace HRMSPOC.API.Controllers
             var users = await _userService.GetUsersByCreatedByIdAsync(createdbyId);
             return Ok(users);
         }
+
+        [HttpGet("organization/{organizationId}")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<UserWithRoleDto>>> GetUsersByOrganizationId(Guid organizationId)
+        {
+            var users = await _userService.GetUsersByOrganizationIdAsync(organizationId);
+            if (users == null || !users.Any())
+            {
+                return NotFound();
+            }
+            return Ok(users);
+        }
     }
-}
+}   

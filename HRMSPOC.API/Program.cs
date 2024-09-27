@@ -148,12 +148,11 @@ builder.Services.AddControllers()
 
 var app = builder.Build();
 
-// Seed default admin user before the app starts serving requests
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var dataSeeder = services.GetRequiredService<DataSeeder>();
-    await dataSeeder.SeedAdminUserAsync(); // Seed the default admin user
+    await dataSeeder.SeedAdminUserAsync(); 
 }
 
 // Configure the HTTP request pipeline.
@@ -168,7 +167,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseCors("AllowAll"); // Apply the CORS policy
+app.UseCors("AllowAll");
 app.UseMiddleware<JwtLoggingMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();

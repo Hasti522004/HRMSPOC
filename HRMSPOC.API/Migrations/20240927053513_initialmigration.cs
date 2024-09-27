@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace HRMSPOC.API.Migrations
 {
     /// <inheritdoc />
-    public partial class initialMigration : Migration
+    public partial class initialmigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -33,7 +33,8 @@ namespace HRMSPOC.API.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    isdelete = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -50,6 +51,7 @@ namespace HRMSPOC.API.Migrations
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    isdelete = table.Column<bool>(type: "bit", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -68,6 +70,24 @@ namespace HRMSPOC.API.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserWithRoleDtos",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RoleName = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserWithRoleDtos", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -205,10 +225,10 @@ namespace HRMSPOC.API.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "33356456-e912-4f80-ba83-7ac58df5e103", "ef4dff63-f439-4d73-ab07-20220dd1b52a", "Employee", "EMPLOYEE" },
-                    { "763f55d4-0ba2-4828-98bd-37a90411d1bd", "63147f27-0cbb-4d02-a553-f577bdc11c70", "HR", "HR" },
-                    { "7722057d-3f27-4738-98a2-ddd606b10e6f", "09f16f5f-6516-482f-9073-6be06dc72745", "SuperAdmin", "SUPERADMIN" },
-                    { "80ad10dd-7c10-471e-a98f-182cbef79be7", "4d9364c8-9670-4023-ba17-7f74d8b86d4f", "Admin", "ADMIN" }
+                    { "5904745e-98ba-4430-b1c0-57d84c1937ee", "83bad098-c16f-4112-a6eb-ba39ad72d4f1", "SuperAdmin", "SUPERADMIN" },
+                    { "cd027753-e3c7-4d84-a5b8-3363e0f9e2ca", "2b432c5e-ff4d-46d4-93c0-17e1c731ccba", "HR", "HR" },
+                    { "e6b3dab4-5e9f-4337-ace4-4acbf20cffc4", "73da3eb3-a2e0-4ef5-9571-1258b041aa5b", "Employee", "EMPLOYEE" },
+                    { "ee074ee4-db40-41bc-995a-37026d405b07", "5ef55ff7-0b4d-423c-96b9-c78edf2e33fb", "Admin", "ADMIN" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -276,6 +296,9 @@ namespace HRMSPOC.API.Migrations
 
             migrationBuilder.DropTable(
                 name: "UserOrganizations");
+
+            migrationBuilder.DropTable(
+                name: "UserWithRoleDtos");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

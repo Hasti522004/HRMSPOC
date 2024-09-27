@@ -13,7 +13,7 @@ namespace HRMSPOC.API.Models
         public string Name { get; set; }
         [Required]
         public string Address { get; set; }
-
+        public bool isdelete { get; set; } = false;
         // Navigation Property
         [JsonIgnore]
         public ICollection<UserOrganization> UserOrganizations { get; set; } = new List<UserOrganization>();

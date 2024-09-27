@@ -4,8 +4,8 @@ namespace HRMSPOC.API.Models
 {
     public class UserOrganization
     {
-        public string UserId { get; set; }  // Still a string because IdentityUser uses string Id
-        public Guid OrganizationId { get; set; }  // Guid for Organization
+        public string UserId { get; set; } 
+        public Guid OrganizationId { get; set; }
 
         public ApplicationUser ApplicationUser { get; set; }
         public Organization Organization { get; set; }

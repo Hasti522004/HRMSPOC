@@ -22,6 +22,41 @@ namespace HRMSPOC.API.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("HRMSPOC.API.DTOs.UserWithRoleDto", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RoleName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserWithRoleDtos");
+                });
+
             modelBuilder.Entity("HRMSPOC.API.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -91,6 +126,9 @@ namespace HRMSPOC.API.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
+                    b.Property<bool>("isdelete")
+                        .HasColumnType("bit");
+
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedEmail")
@@ -117,6 +155,9 @@ namespace HRMSPOC.API.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("isdelete")
+                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
@@ -167,29 +208,29 @@ namespace HRMSPOC.API.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "7722057d-3f27-4738-98a2-ddd606b10e6f",
-                            ConcurrencyStamp = "09f16f5f-6516-482f-9073-6be06dc72745",
+                            Id = "5904745e-98ba-4430-b1c0-57d84c1937ee",
+                            ConcurrencyStamp = "83bad098-c16f-4112-a6eb-ba39ad72d4f1",
                             Name = "SuperAdmin",
                             NormalizedName = "SUPERADMIN"
                         },
                         new
                         {
-                            Id = "80ad10dd-7c10-471e-a98f-182cbef79be7",
-                            ConcurrencyStamp = "4d9364c8-9670-4023-ba17-7f74d8b86d4f",
+                            Id = "ee074ee4-db40-41bc-995a-37026d405b07",
+                            ConcurrencyStamp = "5ef55ff7-0b4d-423c-96b9-c78edf2e33fb",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "763f55d4-0ba2-4828-98bd-37a90411d1bd",
-                            ConcurrencyStamp = "63147f27-0cbb-4d02-a553-f577bdc11c70",
+                            Id = "cd027753-e3c7-4d84-a5b8-3363e0f9e2ca",
+                            ConcurrencyStamp = "2b432c5e-ff4d-46d4-93c0-17e1c731ccba",
                             Name = "HR",
                             NormalizedName = "HR"
                         },
                         new
                         {
-                            Id = "33356456-e912-4f80-ba83-7ac58df5e103",
-                            ConcurrencyStamp = "ef4dff63-f439-4d73-ab07-20220dd1b52a",
+                            Id = "e6b3dab4-5e9f-4337-ace4-4acbf20cffc4",
+                            ConcurrencyStamp = "73da3eb3-a2e0-4ef5-9571-1258b041aa5b",
                             Name = "Employee",
                             NormalizedName = "EMPLOYEE"
                         });

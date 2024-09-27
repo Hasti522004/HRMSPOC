@@ -1,4 +1,5 @@
-﻿using HRMSPOC.API.Models;
+﻿using HRMSPOC.API.DTOs;
+using HRMSPOC.API.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,7 @@ namespace HRMSPOC.API.Data
 
         public DbSet<Organization> Organization { get; set; }
         public DbSet<UserOrganization> UserOrganizations { get; set; } // DbSet for the join entity
+        public DbSet<UserWithRoleDto> UserWithRoleDtos { get; set; } // This is not a typical DbSet, but allows for projection from raw SQL.
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

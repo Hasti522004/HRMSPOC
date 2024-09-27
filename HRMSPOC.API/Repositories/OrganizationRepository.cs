@@ -22,12 +22,12 @@ namespace HRMSPOC.API.Repositories
 
         public async Task<IEnumerable<Organization>> GetOrganizationsAsync()
         {
-            return await _context.Organization.ToListAsync();
+            return await _context.Organization.Where(u=>!u.isdelete).ToListAsync();
         }
 
         public async Task<Organization> GetOrganizationByIdAsync(Guid id)
         {
-            return await _context.Organization.FindAsync(id);
+            return await _context.Organization.Where(u => u.Id == id && !u.isdelete).FirstOrDefaultAsync();
         }
 
         public async Task<Organization> CreateOrganizationAsync(Organization organization)
@@ -48,7 +48,8 @@ namespace HRMSPOC.API.Repositories
             var organization = await GetOrganizationByIdAsync(id);
             if (organization != null)
             {
-                _context.Organization.Remove(organization);
+                organization.isdelete = true;
+                _context.Organization.Update(organization);
                 await _context.SaveChangesAsync();
             }
         }
@@ -76,7 +77,7 @@ namespace HRMSPOC.API.Repositories
 
         public async Task<bool> IsOrganizationExists(Guid id)
         {
-            return await _context.Organization.AnyAsync(o => o.Id == id);
+            return await _context.Organization.AnyAsync(o => o.Id == id && !o.isdelete);
         }
     }
 }

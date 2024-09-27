@@ -17,7 +17,7 @@ namespace HRMSPOC.API.Controllers
 
         // GET: api/UserOrganization/organization/{userId}
         [HttpGet("organization/{userId}")]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> GetOrganizationIdByUserId(string userId)
         {
             var organizationId = await _userOrganizationService.GetOrganizationIdByUserIdAsync(userId);

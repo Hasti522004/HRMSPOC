@@ -12,6 +12,7 @@ namespace HRMSPOC.API.Models
         public string? Address { get; set; }
         public Guid CreatedBy { get; set; }  // Assuming CreatedBy refers to another user's ID
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public bool isdelete { get; set; } = false;
 
         [JsonIgnore]
         public ICollection<UserOrganization> UserOrganizations { get; set; } = new List<UserOrganization>();

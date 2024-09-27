@@ -55,30 +55,41 @@ namespace HRMSPOC.WEB.Controllers
                     {
                         return RedirectToAction("Index", "Organization");
                     }
-                    else if (roles.Contains("Admin"))
+                    //else if (roles.Contains("Admin"))
+                    //{
+                    //    var response = await _httpClient.GetAsync($"https://localhost:7095/api/UserOrganization/organization/{userId}");
+
+                    //    if (response.IsSuccessStatusCode)
+                    //    {
+                    //        var content = await response.Content.ReadAsStringAsync();
+                    //        var organizationId = JsonConvert.DeserializeObject<OrganizationResponse>(content).OrganizationId;
+
+                    //        // Set OrganizationId in session
+                    //        HttpContext.Session.SetString("OrganizationId", organizationId.ToString());
+                    //        return RedirectToAction("Index", "HR");
+                    //    }
+                    //    else
+                    //    {
+                    //        // Handle the case where the API call fails
+                    //        ModelState.AddModelError(string.Empty, "Failed to retrieve organization ID.");
+                    //        return View(); // Return to the current view with an error message
+                    //    }
+                    //}
+                    //else if (roles.Contains("HR"))
+                    //{
+                    //    HttpContext.Session.SetString("HrId", userId.ToString());
+                    //    return RedirectToAction("Index", "Employee");
+                    //}
+                    else
                     {
                         var response = await _httpClient.GetAsync($"https://localhost:7095/api/UserOrganization/organization/{userId}");
-
                         if (response.IsSuccessStatusCode)
                         {
                             var content = await response.Content.ReadAsStringAsync();
                             var organizationId = JsonConvert.DeserializeObject<OrganizationResponse>(content).OrganizationId;
-
-                            // Set OrganizationId in session
-                            HttpContext.Session.SetString("OrganizationId", organizationId.ToString());
-                            return RedirectToAction("Index", "HR");
+                            HttpContext.Session.Set("OrganizationId", organizationId.ToByteArray());
+                            return RedirectToAction("Index", "Dashboard");
                         }
-                        else
-                        {
-                            // Handle the case where the API call fails
-                            ModelState.AddModelError(string.Empty, "Failed to retrieve organization ID.");
-                            return View(); // Return to the current view with an error message
-                        }
-                    }
-                    else if (roles.Contains("HR"))
-                    {
-                        HttpContext.Session.SetString("HrId", userId.ToString());
-                        return RedirectToAction("Index", "Employee");
                     }
                 }
                 ModelState.AddModelError("", "Login failed.");

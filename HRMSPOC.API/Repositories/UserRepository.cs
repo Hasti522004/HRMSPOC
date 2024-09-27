@@ -1,7 +1,9 @@
 ﻿using HRMSPOC.API.Data;
+using HRMSPOC.API.DTOs;
 using HRMSPOC.API.Models;
 using HRMSPOC.API.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -22,12 +24,12 @@ namespace HRMSPOC.API.Repositories
 
         public async Task<IEnumerable<ApplicationUser>> GetUsersAsync()
         {
-            return await _context.Users.ToListAsync();
+            return await _context.Users.Where(u=>!u.isdelete).ToListAsync();
         }
 
         public async Task<ApplicationUser> GetUserByIdAsync(string id)
         {
-            return await _userManager.FindByIdAsync(id.ToString());
+            return await _userManager.Users.Where(u => u.Id == id && !u.isdelete).FirstOrDefaultAsync();
         }
 
         public async Task<ApplicationUser> CreateUserAsync(ApplicationUser user)
@@ -53,15 +55,16 @@ namespace HRMSPOC.API.Repositories
             {
                 throw new Exception("User not found.");
             }
-
-            // Update user fields
+            if (existingUser.isdelete)
+            {
+                throw new Exception("User was Deleted");
+            }
             existingUser.FirstName = user.FirstName;
             existingUser.LastName = user.LastName;
             existingUser.Address = user.Address;
-            existingUser.PhoneNumber = user.PhoneNumber;  // Update phone number
-            existingUser.Email = user.Email;  // Update email
+            existingUser.PhoneNumber = user.PhoneNumber;  
+            existingUser.Email = user.Email;
 
-            // Update password if provided
             if (!string.IsNullOrWhiteSpace(user.PasswordHash))
             {
                 var token = await _userManager.GeneratePasswordResetTokenAsync(existingUser);
@@ -73,7 +76,6 @@ namespace HRMSPOC.API.Repositories
                 }
             }
 
-            // Update the user in the database
             await _userManager.UpdateAsync(existingUser);
         }
 
@@ -83,15 +85,28 @@ namespace HRMSPOC.API.Repositories
             var user = await GetUserByIdAsync(id);
             if (user != null)
             {
-                await _userManager.DeleteAsync(user);
+                user.isdelete = true;
+                await _userManager.UpdateAsync(user);
             }
         }
         public async Task<IEnumerable<ApplicationUser>> GetUsersByCreatedByIdAsync(Guid createdbyId)
         {
             return await _userManager.Users
-                .Where(u => u.CreatedBy == createdbyId)
+                .Where(u => u.CreatedBy == createdbyId && !u.isdelete)
                 .ToListAsync();
         }
+
+        public async Task<IEnumerable<UserWithRoleDto>> GetUsersByOrganizationIdAsync(Guid organizationId)
+        {
+            var organizationIdParam = new SqlParameter("@OrganizationId", organizationId);
+
+            var users = await _context.Set<UserWithRoleDto>()
+             .FromSqlRaw("EXEC sp_GetUsersByOrganizationId @OrganizationId", organizationIdParam)
+             .ToListAsync();
+
+            return users;
+        }
+
 
     }
 }

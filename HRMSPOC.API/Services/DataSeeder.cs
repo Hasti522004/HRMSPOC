@@ -33,6 +33,7 @@ namespace HRMSPOC.API.Services
                     FirstName = "Super", // Set default first name
                     LastName = "Admin",  // Set default last name
                     Address = "123 Admin St", // Default address to satisfy the non-nullable field
+                    isdelete = false,
                     EmailConfirmed = true,
                 };
 

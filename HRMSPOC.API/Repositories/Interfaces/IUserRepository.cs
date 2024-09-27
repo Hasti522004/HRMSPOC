@@ -1,4 +1,5 @@
-﻿using HRMSPOC.API.Models;
+﻿using HRMSPOC.API.DTOs;
+using HRMSPOC.API.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -13,6 +14,6 @@ namespace HRMSPOC.API.Repositories.Interfaces
         Task UpdateUserAsync(ApplicationUser user);
         Task DeleteUserAsync(string id);
         Task<IEnumerable<ApplicationUser>> GetUsersByCreatedByIdAsync(Guid createdbyId);
-
+        Task<IEnumerable<UserWithRoleDto>> GetUsersByOrganizationIdAsync(Guid organizationId);
     }
 }

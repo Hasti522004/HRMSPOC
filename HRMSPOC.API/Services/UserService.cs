@@ -1,4 +1,5 @@
-﻿using HRMSPOC.API.Models;
+﻿using HRMSPOC.API.DTOs;
+using HRMSPOC.API.Models;
 using HRMSPOC.API.Repositories.Interfaces;
 using HRMSPOC.API.Services.Interface;
 using Microsoft.AspNetCore.Identity;
@@ -89,6 +90,9 @@ namespace HRMSPOC.API.Services
         {
             return await _userRepository.GetUsersByCreatedByIdAsync(createdbyId);
         }
-
+        public async Task<IEnumerable<UserWithRoleDto>> GetUsersByOrganizationIdAsync(Guid organizationId)
+        {
+            return await _userRepository.GetUsersByOrganizationIdAsync(organizationId);
+        }
     }
 }
