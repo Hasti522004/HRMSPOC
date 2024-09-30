@@ -2,9 +2,57 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-    <br />
+<style>
+    body {
+        background-color: #f8f9fa; /* Light background color */
+        font-family: Arial, sans-serif; /* Set a clean font */
+    }
+
+    .hero-section {
+        text-align: center; /* Center align text */
+        padding: 100px 20px; /* Padding for spacing */
+        background-color: #66b3ff; /* Lighter blue for hero section */
+        color: white; /* Text color */
+        border-radius: 8px; /* Rounded corners */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    }
+
+    h1 {
+        font-size: 2.5rem; /* Larger font size for the main title */
+        margin-bottom: 20px; /* Space below title */
+        animation: fadeIn 1s; /* Fade-in animation */
+    }
+
+    h2 {
+        font-size: 1.5rem; /* Subheading size */
+        margin-bottom: 20px; /* Space below subheading */
+        animation: fadeIn 1s; /* Fade-in animation */
+    }
+
+    p {
+        font-size: 1.2rem; /* Font size for paragraph */
+        margin-bottom: 30px; /* Space below paragraph */
+        animation: fadeIn 1s; /* Fade-in animation */
+    }
+
+    .btn {
+        transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transition for button effects */
+    }
+
+    .btn-primary {
+        background-color: #007bff; /* Primary button color */
+        border-color: #007bff; /* Button border color */
+    }
+
+        .btn-primary:hover {
+            background-color: #0056b3; /* Darker shade on hover */
+            transform: scale(1.05); /* Slightly grow on hover */
+        }
+</style>
+
+<div class="hero-section">
+    <h1>HRMS - Human Resource Management System</h1>
+    <h2>Welcome to Our Management System</h2>
+   
     <a class="btn btn-primary" asp-controller="Account" asp-action="Login">Login</a>
 </div>

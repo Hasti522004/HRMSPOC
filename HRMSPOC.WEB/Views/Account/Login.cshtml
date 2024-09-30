@@ -1,36 +1,60 @@
 ﻿@model HRMSPOC.WEB.DTOs.LoginDTO
 
-<h2>Login</h2>
+<style>
+    body {
+        background-color: #f8f9fa; /* Light background for contrast */
+    }
+    .login-container {
+        max-width: 400px; /* Limit the width of the form */
+        margin: 100px auto; /* Center the form vertically and horizontally */
+        padding: 20px;
+        background-color: white; /* White background for the form */
+        border-radius: 8px; /* Rounded corners */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    }
+    h2 {
+        color: #343a40; /* Darker color for the heading */
+    }
+    .btn-primary {
+        background-color: #007bff; /* Bootstrap primary color */
+        border-color: #007bff; /* Border color */
+    }
+</style>
+
+<h2 class="text-center mb-4">Login</h2>
 
 <!-- Display validation summary for form-wide errors -->
-<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div asp-validation-summary="ModelOnly" class="text-danger mb-3 text-center"></div>
 
-<form asp-action="Login" method="post">
-    <div>
-        <label asp-for="Email"></label>
-        <input asp-for="Email" />
-        <span asp-validation-for="Email" class="text-danger"></span>
-    </div>
+<div class="login-container">
+    <form asp-action="Login" method="post">
+        <div class="form-group">
+            <label asp-for="Email" class="form-label"></label>
+            <input asp-for="Email" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
 
-    <div>
-        <label asp-for="Password"></label>
-        <input asp-for="Password" type="password" />
-        <span asp-validation-for="Password" class="text-danger"></span>
-    </div>
+        <div class="form-group">
+            <label asp-for="Password" class="form-label"></label>
+            <input asp-for="Password" type="password" class="form-control" />
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
 
-    <button type="submit">Login</button>
+        <button type="submit" class="btn btn-primary w-100">Login</button>
 
-    <!-- Links for password reset and forgot password -->
-    <div>
-        <a asp-action="ForgotPassword">Forgot Password?</a>
-    </div>
-    <div>
-        <a asp-action="ResetPassword">Reset Password</a>
-    </div>
-</form>
+        <!-- Links for password reset and forgot password -->
+        <div class="text-center mt-3">
+            <a asp-action="ForgotPassword" class="text-secondary">Forgot Password?</a>
+        </div>
+        <div class="text-center">
+            <a asp-action="ResetPassword" class="text-secondary">Reset Password</a>
+        </div>
+    </form>
+</div>
 
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
+

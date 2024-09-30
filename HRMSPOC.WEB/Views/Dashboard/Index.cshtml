@@ -4,21 +4,22 @@
     ViewData["Title"] = "User Dashboard";
 }
 
-<h1>User Dashboard</h1>
+<h1 class="mb-4">User Dashboard</h1>
 
-<!-- Show "Create New User" button only for Admins and HRs -->
-@if (ViewBag.UserRoles == "Admin" || ViewBag.UserRoles == "HR" || ViewBag.UserRoles == "SuperAdmin")
-{
-    <div class="mb-3">
-        <a asp-controller="Dashboard" asp-action="Create" class="btn btn-primary">Create New User</a>
-    </div>
-}
-
+<div class="d-flex justify-content-between mb-3">
+    @if (ViewBag.UserRoles == "Admin" || ViewBag.UserRoles == "HR" || ViewBag.UserRoles == "SuperAdmin")
+    {
+        <div>
+            <a asp-controller="Dashboard" asp-action="Create" class="btn btn-primary">Create New User</a>
+        </div>
+    }
+    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Go to Home</a>
+</div>
 
 @if (Model != null && Model.Any())
 {
-    <table class="table">
-        <thead>
+    <table class="table table-hover table-striped">
+        <thead class="thead-dark">
             <tr>
                 <th>First Name</th>
                 <th>Last Name</th>
@@ -38,18 +39,20 @@
                     <td>@user.Email</td>
                     <td>@user.PhoneNumber</td>
                     <td>@user.Address</td>
-                    <td>@user.RoleName</td>
+                    <td>
+                        <span class="badge bg-dark text-white">@user.RoleName</span>
+                    </td>
                     <td>
                         <!-- Actions based on user role -->
                         @if (ViewBag.UserRoles == "Admin" || ViewBag.UserRoles == "SuperAdmin")
                         {
-                            <a asp-controller="Dashboard" asp-action="Edit" asp-route-id="@user.Id" class="btn btn-warning">Edit</a>
-                            <a asp-controller="Dashboard" asp-action="Delete" asp-route-id="@user.Id" class="btn btn-danger">Delete</a>
+                            <a asp-controller="Dashboard" asp-action="Edit" asp-route-id="@user.Id" class="btn btn-warning btn-sm">Edit</a>
+                            <a asp-controller="Dashboard" asp-action="Delete" asp-route-id="@user.Id" class="btn btn-danger btn-sm">Delete</a>
                         }
                         else if (ViewBag.UserRoles == "HR" && @user.CreatedById == ViewBag.UserId)
                         {
-                            <a asp-controller="Dashboard" asp-action="Edit" asp-route-id="@user.Id" class="btn btn-warning">Edit</a>
-                            <a asp-controller="Dashboard" asp-action="Delete" asp-route-id="@user.Id" class="btn btn-danger">Delete</a>
+                            <a asp-controller="Dashboard" asp-action="Edit" asp-route-id="@user.Id" class="btn btn-warning btn-sm">Edit</a>
+                            <a asp-controller="Dashboard" asp-action="Delete" asp-route-id="@user.Id" class="btn btn-danger btn-sm">Delete</a>
                         }
 
                         <!-- Employees cannot see edit or delete buttons -->

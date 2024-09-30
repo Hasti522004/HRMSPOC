@@ -1,10 +1,45 @@
 ﻿@model IEnumerable<HRMSPOC.WEB.Models.OrganizationViewModel>
 
+<style>
+    body {
+        background-color: #f8f9fa; /* Light background for contrast */
+    }
+
+    h2 {
+        color: #343a40; /* Darker color for the heading */
+        text-align: center; /* Center the heading */
+        margin-bottom: 20px; /* Space below heading */
+    }
+
+    .table {
+        background-color: #ffffff; /* White background for the table */
+        border-radius: 8px; /* Rounded corners */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    }
+
+        .table th, .table td {
+            vertical-align: middle; /* Center align cell content */
+        }
+
+    .btn {
+        margin: 0 5px; /* Space between buttons */
+    }
+
+    .action-buttons {
+        display: flex;
+        justify-content: center; /* Center the action buttons */
+        gap: 5px; /* Space between action buttons */
+    }
+</style>
+
 <h2>Organizations</h2>
 
-<a asp-action="Create" class="btn btn-primary">Create New Organization</a>
+<div class="d-flex justify-content-between mb-4">
+    <a asp-action="Create" class="btn btn-primary">Create New Organization</a>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Go to Home</a>
+</div>
 
-<table class="table table-bordered mt-3">
+<table class="table table-bordered">
     <thead>
         <tr>
             <th>Name</th>
@@ -20,7 +55,7 @@
                 <tr>
                     <td>@organization.Name</td>
                     <td>@organization.Address</td>
-                    <td>
+                    <td class="action-buttons">
                         <a asp-action="Edit" asp-route-id="@organization.Id" class="btn btn-warning">Edit</a>
                         <a asp-action="Delete" asp-route-id="@organization.Id" class="btn btn-danger">Delete</a>
                         <a asp-controller="Dashboard" asp-action="SetOrganizationId" asp-route-userId="@organization.Id" class="btn btn-info">HR Management</a>
