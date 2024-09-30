@@ -3,9 +3,6 @@ using HRMSPOC.API.Models;
 using HRMSPOC.API.Repositories.Interfaces;
 using HRMSPOC.API.Services.Interface;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace HRMSPOC.API.Services
 {
@@ -45,7 +42,7 @@ namespace HRMSPOC.API.Services
                 // Create the user
                 var result = await _userRepository.CreateUserAsync(user);
 
-                if (result != null) // Ensure user creation was successful
+                if (result != null)
                 {
                     if (!string.IsNullOrEmpty(role))
                     {
@@ -53,27 +50,21 @@ namespace HRMSPOC.API.Services
                         var organizationId = await _userOrganizationRepository.GetOrganizationIdByUserIdAsync(createdById.ToString());
                         if (organizationId.HasValue)
                         {
-                            // Associate user with the organization
                             await _userOrganizationRepository.AddUserOrganizationAsync(result.Id, organizationId.Value);
                         }
 
                     }
                     else if (isOrganization)
                     {
-                        // Assign the HR role
                         await _userManager.AddToRoleAsync(result, "HR");
-                        // Associate user with the organization
                         await _userOrganizationRepository.AddUserOrganizationAsync(result.Id, createdById);
                     }
                     else
                     {
-                        // Assign the Employee role
                         await _userManager.AddToRoleAsync(result, "Employee");
-                        // Get the organization ID of the user who created this user
                         var organizationId = await _userOrganizationRepository.GetOrganizationIdByUserIdAsync(createdById.ToString());
                         if (organizationId.HasValue)
                         {
-                            // Associate user with the organization
                             await _userOrganizationRepository.AddUserOrganizationAsync(result.Id, organizationId.Value);
                         }
                     }
@@ -81,8 +72,6 @@ namespace HRMSPOC.API.Services
 
                 return result;
             }
-
-            // If CreatedBy is empty, just create the user
             return await _userRepository.CreateUserAsync(user);
         }
 

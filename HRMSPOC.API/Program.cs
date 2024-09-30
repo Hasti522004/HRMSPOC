@@ -11,19 +11,15 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using HRMSPOC.API.Middleware;
 using Microsoft.OpenApi.Models;
-using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    // Configure the Swagger to use the JWT bearer token
     options.SwaggerDoc("v1", new OpenApiInfo { Title = "HRMS POC API", Version = "v1" });
 
-    // Add JWT Bearer authentication
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,

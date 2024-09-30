@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HRMSPOC.API.Controllers
 {
-    // [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(Roles = "SuperAdmin")]
@@ -48,7 +47,6 @@ namespace HRMSPOC.API.Controllers
                 return BadRequest("Organization data is required.");
             }
 
-            // Replace with actual SuperAdmin ID logic
             Guid superAdminId = new Guid("70cd23a7-e069-4f21-93ca-d862c72964e4");
             var createdOrganization = await _organizationService.CreateOrganizationWithAdminAsync(organization, superAdminId);
             return CreatedAtAction(nameof(GetOrganizationById), new { id = createdOrganization.Id }, createdOrganization);

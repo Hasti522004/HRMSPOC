@@ -13,14 +13,13 @@ namespace HRMSPOC.API.Data
         }
 
         public DbSet<Organization> Organization { get; set; }
-        public DbSet<UserOrganization> UserOrganizations { get; set; } // DbSet for the join entity
-        public DbSet<UserWithRoleDto> UserWithRoleDtos { get; set; } // This is not a typical DbSet, but allows for projection from raw SQL.
+        public DbSet<UserOrganization> UserOrganizations { get; set; }
+        public DbSet<UserWithRoleDto> UserWithRoleDtos { get; set; } // Allows for projection from raw SQL for running a stored procedure
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // Configure Identity Tables, if necessary
             modelBuilder.Entity<ApplicationUser>(entity =>
             {
                 entity.ToTable(name: "Users");
@@ -40,42 +39,6 @@ namespace HRMSPOC.API.Data
                 .HasOne(uo => uo.Organization)
                 .WithMany(o => o.UserOrganizations)
                 .HasForeignKey(uo => uo.OrganizationId);
-
-            SeedRoles(modelBuilder);
-        }
-
-        private static void SeedRoles(ModelBuilder builder)
-        {
-            builder.Entity<IdentityRole>().HasData(
-                new IdentityRole
-                {
-                    Id = Guid.NewGuid().ToString(),
-                    Name = "SuperAdmin",
-                    NormalizedName = "SUPERADMIN".ToUpper(),
-                    ConcurrencyStamp = Guid.NewGuid().ToString()
-                },
-                new IdentityRole
-                {
-                    Id = Guid.NewGuid().ToString(),
-                    Name = "Admin",
-                    NormalizedName = "ADMIN".ToUpper(),
-                    ConcurrencyStamp = Guid.NewGuid().ToString()
-                },
-                new IdentityRole
-                {
-                    Id = Guid.NewGuid().ToString(),
-                    Name = "HR",
-                    NormalizedName = "HR".ToUpper(),
-                    ConcurrencyStamp = Guid.NewGuid().ToString()
-                },
-                new IdentityRole
-                {
-                    Id = Guid.NewGuid().ToString(),
-                    Name = "Employee",
-                    NormalizedName = "EMPLOYEE".ToUpper(),
-                    ConcurrencyStamp = Guid.NewGuid().ToString()
-                }
-            );
         }
     }
 }

@@ -41,7 +41,7 @@ namespace HRMSPOC.API.Controllers
 
         // Create new user
         [HttpPost("{role}")]
-        [Authorize(Roles = "SuperAdmin,Admin,HR")] // Restrict access to specific roles
+        [Authorize(Roles = "SuperAdmin,Admin,HR")]
 
         public async Task<ActionResult<ApplicationUser>> CreateUser([FromBody] ApplicationUser user,string role)
         {
@@ -55,7 +55,7 @@ namespace HRMSPOC.API.Controllers
 
         // Update user (with string ID)
         [HttpPut]
-        [Authorize(Roles = "SuperAdmin,Admin,HR")] // Restrict access to specific roles
+        [Authorize(Roles = "SuperAdmin,Admin,HR")]
 
         public async Task<ActionResult> UpdateUser([FromBody] ApplicationUser user)
         {
@@ -80,7 +80,7 @@ namespace HRMSPOC.API.Controllers
 
         // Delete user (with string ID)
         [HttpDelete("{id}")]
-        [Authorize(Roles = "SuperAdmin,Admin,HR")] // Restrict access to specific roles
+        [Authorize(Roles = "SuperAdmin,Admin,HR")]
 
         public async Task<ActionResult> DeleteUser(string id)
         {

@@ -30,9 +30,9 @@ namespace HRMSPOC.API.Services
                 {
                     UserName = "superadmin@admin.com",
                     Email = "superadmin@admin.com",
-                    FirstName = "Super", // Set default first name
-                    LastName = "Admin",  // Set default last name
-                    Address = "123 Admin St", // Default address to satisfy the non-nullable field
+                    FirstName = "Super",
+                    LastName = "Admin", 
+                    Address = "123 Admin St",
                     isdelete = false,
                     EmailConfirmed = true,
                 };
@@ -50,7 +50,15 @@ namespace HRMSPOC.API.Services
         {
             if (!await _roleManager.RoleExistsAsync(roleName))
             {
-                await _roleManager.CreateAsync(new IdentityRole(roleName));
+                var role = new IdentityRole
+                {
+                    Name = roleName,
+                    NormalizedName = roleName.ToUpper(),
+                    ConcurrencyStamp = Guid.NewGuid().ToString()
+                };
+
+                await _roleManager.CreateAsync(role);
+
             }
         }
     }

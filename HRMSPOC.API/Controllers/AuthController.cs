@@ -1,6 +1,5 @@
 ﻿using HRMSPOC.API.DTOs;
 using HRMSPOC.API.Services.Interface;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HRMSPOC.API.Controllers;

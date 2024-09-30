@@ -10,7 +10,7 @@ namespace HRMSPOC.API.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string? Address { get; set; }
-        public Guid CreatedBy { get; set; }  // Assuming CreatedBy refers to another user's ID
+        public Guid CreatedBy { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public bool isdelete { get; set; } = false;
 

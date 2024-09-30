@@ -13,15 +13,11 @@ namespace HRMSPOC.API.Repositories
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IConfiguration _configuration;
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public AuthRepository(SignInManager<ApplicationUser> signInManager, RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager, IConfiguration configuration)
+        public AuthRepository(UserManager<ApplicationUser> userManager, IConfiguration configuration)
         {
             _userManager = userManager;
             _configuration = configuration;
-            _signInManager = signInManager;
-            _roleManager = roleManager;
         }
 
         public async Task<string> LoginAsync(AuthDTO loginDto)
@@ -29,11 +25,10 @@ namespace HRMSPOC.API.Repositories
             var user = await _userManager.FindByEmailAsync(loginDto.Email);
             if (user == null)
             {
-                throw new Exception("Invalid Credentials");
+                throw new Exception("User Not Found");
             }
 
-            // Check if the user is marked as deleted
-            if (user.isdelete) // Assuming IsDeleted is a property of ApplicationUser
+            if (user.isdelete)
             {
                 throw new Exception("User was not found.");
             }
@@ -43,7 +38,7 @@ namespace HRMSPOC.API.Repositories
                 throw new Exception("Invalid Credentials");
             }
 
-            return await GenerateJwtToken(user); // Await token generation
+            return await GenerateJwtToken(user);
         }
 
         private async Task<string> GenerateJwtToken(ApplicationUser user)
