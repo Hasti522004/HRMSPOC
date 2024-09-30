@@ -13,16 +13,7 @@ builder.Services.AddHttpClient<OrganizationService>(client =>
     client.BaseAddress = new Uri("https://localhost:7095");
 })
 .AddHttpMessageHandler<AuthHttpClientHandler>();
-builder.Services.AddHttpClient<UserService>(client =>
-{
-    client.BaseAddress = new Uri("https://localhost:7095");
-})
-.AddHttpMessageHandler<AuthHttpClientHandler>();
-builder.Services.AddHttpClient<EmployeeService>(client =>
-{
-    client.BaseAddress = new Uri("https://localhost:7095");
-})
-.AddHttpMessageHandler<AuthHttpClientHandler>();
+
 builder.Services.AddHttpClient<DashboardService>(client =>
 {
     client.BaseAddress = new Uri("https://localhost:7095");
