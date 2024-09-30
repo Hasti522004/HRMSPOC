@@ -15,7 +15,8 @@ namespace HRMSPOC.API.Repositories
         private readonly IConfiguration _configuration;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        public AuthRepository(SignInManager<ApplicationUser> signInManager,RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager, IConfiguration configuration)
+
+        public AuthRepository(SignInManager<ApplicationUser> signInManager, RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager, IConfiguration configuration)
         {
             _userManager = userManager;
             _configuration = configuration;
@@ -26,10 +27,22 @@ namespace HRMSPOC.API.Repositories
         public async Task<string> LoginAsync(AuthDTO loginDto)
         {
             var user = await _userManager.FindByEmailAsync(loginDto.Email);
-            if (user == null || !await _userManager.CheckPasswordAsync(user, loginDto.Password))
+            if (user == null)
             {
                 throw new Exception("Invalid Credentials");
             }
+
+            // Check if the user is marked as deleted
+            if (user.isdelete) // Assuming IsDeleted is a property of ApplicationUser
+            {
+                throw new Exception("User was not found.");
+            }
+
+            if (!await _userManager.CheckPasswordAsync(user, loginDto.Password))
+            {
+                throw new Exception("Invalid Credentials");
+            }
+
             return await GenerateJwtToken(user); // Await token generation
         }
 
@@ -42,12 +55,12 @@ namespace HRMSPOC.API.Repositories
                 new Claim(ClaimTypes.NameIdentifier, user.Id)
             };
 
-                   
-             var userRoles = await _userManager.GetRolesAsync(user);
-             foreach (var role in userRoles)
-             {
-                  claims.Add(new Claim(ClaimTypes.Role, role));
-             }
+            var userRoles = await _userManager.GetRolesAsync(user);
+            foreach (var role in userRoles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
+
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
@@ -57,9 +70,9 @@ namespace HRMSPOC.API.Repositories
                 claims: claims,
                 expires: DateTime.Now.AddMinutes(30),
                 signingCredentials: creds
-             );
+            );
 
-             return new JwtSecurityTokenHandler().WriteToken(token);
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 }
