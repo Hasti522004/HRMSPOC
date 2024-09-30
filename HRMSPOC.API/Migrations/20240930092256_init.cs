@@ -3,12 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-
 namespace HRMSPOC.API.Migrations
 {
     /// <inheritdoc />
-    public partial class initialmigration : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -83,7 +81,8 @@ namespace HRMSPOC.API.Migrations
                     PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    RoleName = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    RoleName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -218,17 +217,6 @@ namespace HRMSPOC.API.Migrations
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.InsertData(
-                table: "AspNetRoles",
-                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[,]
-                {
-                    { "5904745e-98ba-4430-b1c0-57d84c1937ee", "83bad098-c16f-4112-a6eb-ba39ad72d4f1", "SuperAdmin", "SUPERADMIN" },
-                    { "cd027753-e3c7-4d84-a5b8-3363e0f9e2ca", "2b432c5e-ff4d-46d4-93c0-17e1c731ccba", "HR", "HR" },
-                    { "e6b3dab4-5e9f-4337-ace4-4acbf20cffc4", "73da3eb3-a2e0-4ef5-9571-1258b041aa5b", "Employee", "EMPLOYEE" },
-                    { "ee074ee4-db40-41bc-995a-37026d405b07", "5ef55ff7-0b4d-423c-96b9-c78edf2e33fb", "Admin", "ADMIN" }
                 });
 
             migrationBuilder.CreateIndex(

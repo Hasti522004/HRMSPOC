@@ -1,5 +1,6 @@
 ﻿using HRMSPOC.WEB.Models;
 using HRMSPOC.WEB.ViewModel;
+using Newtonsoft.Json;
 using System.Text.Json;
 
 namespace HRMSPOC.WEB.Services
@@ -13,6 +14,29 @@ namespace HRMSPOC.WEB.Services
         {
             _httpClient = httpClient;
             _httpContextAccessor = httpContextAccessor;
+        }
+        public async Task SetOrganizationAndCreatedById(string userId)
+        {
+            // Set OrganizationId in the session using the provided userId (assuming it's the OrganizationId)
+            var organizationId = Guid.Parse(userId);
+            _httpContextAccessor.HttpContext.Session.Set("OrganizationId", organizationId.ToByteArray());
+
+            // Call API to get users by organization
+            var userResponse = await _httpClient.GetAsync($"https://localhost:7095/api/user/organization/{organizationId}");
+            if (userResponse.IsSuccessStatusCode)
+            {
+                var userContent = await userResponse.Content.ReadAsStringAsync();
+                var users = JsonConvert.DeserializeObject<List<UserViewModel>>(userContent);
+
+                // Filter for the user with the Admin role
+                var adminUser = users.FirstOrDefault(u => u.RoleName == "Admin");
+
+                if (adminUser != null)
+                {
+                    // Set the Admin user's Id as CreatedById in the session
+                    _httpContextAccessor.HttpContext.Session.SetString("CreatedById", adminUser.Id);
+                }
+            }
         }
 
         public async Task<IEnumerable<UserViewModel>> GetUsersByOrganizationIdAsync(Guid organizationId)

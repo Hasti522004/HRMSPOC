@@ -23,7 +23,7 @@
                     <td>
                         <a asp-action="Edit" asp-route-id="@organization.Id" class="btn btn-warning">Edit</a>
                         <a asp-action="Delete" asp-route-id="@organization.Id" class="btn btn-danger">Delete</a>
-                        <a asp-controller="HR" asp-action="SetOrganizationId" asp-route-organizationId="@organization.Id" class="btn btn-info">HR Management</a>
+                        <a asp-controller="Dashboard" asp-action="SetOrganizationId" asp-route-userId="@organization.Id" class="btn btn-info">HR Management</a>
                     </td>
                 </tr>
             }

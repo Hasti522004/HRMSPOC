@@ -7,7 +7,7 @@
 <h1>User Dashboard</h1>
 
 <!-- Show "Create New User" button only for Admins and HRs -->
-@if (ViewBag.UserRoles == "Admin" || ViewBag.UserRoles == "HR")
+@if (ViewBag.UserRoles == "Admin" || ViewBag.UserRoles == "HR" || ViewBag.UserRoles == "SuperAdmin")
 {
     <div class="mb-3">
         <a asp-controller="Dashboard" asp-action="Create" class="btn btn-primary">Create New User</a>
@@ -41,7 +41,7 @@
                     <td>@user.RoleName</td>
                     <td>
                         <!-- Actions based on user role -->
-                        @if (ViewBag.UserRoles == "Admin")
+                        @if (ViewBag.UserRoles == "Admin" || ViewBag.UserRoles == "SuperAdmin")
                         {
                             <a asp-controller="Dashboard" asp-action="Edit" asp-route-id="@user.Id" class="btn btn-warning">Edit</a>
                             <a asp-controller="Dashboard" asp-action="Delete" asp-route-id="@user.Id" class="btn btn-danger">Delete</a>

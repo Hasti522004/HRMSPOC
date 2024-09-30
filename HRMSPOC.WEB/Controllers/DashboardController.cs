@@ -17,7 +17,11 @@ namespace HRMSPOC.WEB.Controllers
         {
             _dashboardService = dashboardService;
         }
-
+        public async Task<IActionResult> SetOrganizationId(string userId)
+        {
+            await _dashboardService.SetOrganizationAndCreatedById(userId);
+            return RedirectToAction("Index", "Dashboard");
+        }
         // Display users
         public async Task<IActionResult> Index()
         {

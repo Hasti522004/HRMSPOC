@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HRMSPOC.API.Migrations
 {
     [DbContext(typeof(HRMSDbContext))]
-    [Migration("20240927053513_initialmigration")]
-    partial class initialmigration
+    [Migration("20240930092256_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,6 +32,9 @@ namespace HRMSPOC.API.Migrations
 
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -207,36 +210,6 @@ namespace HRMSPOC.API.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "5904745e-98ba-4430-b1c0-57d84c1937ee",
-                            ConcurrencyStamp = "83bad098-c16f-4112-a6eb-ba39ad72d4f1",
-                            Name = "SuperAdmin",
-                            NormalizedName = "SUPERADMIN"
-                        },
-                        new
-                        {
-                            Id = "ee074ee4-db40-41bc-995a-37026d405b07",
-                            ConcurrencyStamp = "5ef55ff7-0b4d-423c-96b9-c78edf2e33fb",
-                            Name = "Admin",
-                            NormalizedName = "ADMIN"
-                        },
-                        new
-                        {
-                            Id = "cd027753-e3c7-4d84-a5b8-3363e0f9e2ca",
-                            ConcurrencyStamp = "2b432c5e-ff4d-46d4-93c0-17e1c731ccba",
-                            Name = "HR",
-                            NormalizedName = "HR"
-                        },
-                        new
-                        {
-                            Id = "e6b3dab4-5e9f-4337-ace4-4acbf20cffc4",
-                            ConcurrencyStamp = "73da3eb3-a2e0-4ef5-9571-1258b041aa5b",
-                            Name = "Employee",
-                            NormalizedName = "EMPLOYEE"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
