@@ -11,6 +11,7 @@ BEGIN
         u.Address, 
         u.UserName,
         r.Name AS RoleName  -- Include the role name
+	u.CreatedBy  
     FROM 
         dbo.Users u
     INNER JOIN 

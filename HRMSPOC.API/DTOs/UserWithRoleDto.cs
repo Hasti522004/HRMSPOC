@@ -10,5 +10,6 @@
         public string? Address { get; set; }
         public string UserName { get; set; }
         public string? RoleName { get; set; }
+        public Guid? CreatedBy { get; set; }
     }
 }

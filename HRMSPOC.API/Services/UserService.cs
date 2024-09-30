@@ -40,7 +40,6 @@ namespace HRMSPOC.API.Services
             {
                 var createdById = user.CreatedBy;
 
-                // Check if CreatedBy is an Organization
                 bool isOrganization = await _organizationRepository.IsOrganizationExists(createdById);
 
                 // Create the user

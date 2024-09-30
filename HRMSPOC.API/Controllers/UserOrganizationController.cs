@@ -24,7 +24,7 @@ namespace HRMSPOC.API.Controllers
 
             if (!organizationId.HasValue)
             {
-                return NotFound(); // Return 404 if not found
+                return NotFound();
             }
 
             return Ok(new { OrganizationId = organizationId.Value });

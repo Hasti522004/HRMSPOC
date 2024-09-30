@@ -35,7 +35,7 @@ namespace HRMSPOC.API.Repositories
         public async Task<ApplicationUser> CreateUserAsync(ApplicationUser user)
         {
             user.UserName = user.Email;
-            var result = await _userManager.CreateAsync(user);
+            var result = await _userManager.CreateAsync(user,user.PasswordHash);
             if(user.CreatedBy != Guid.Empty)
             {
                 var createdById = user.CreatedBy.ToString();

@@ -5,9 +5,16 @@
 }
 
 <h1>User Dashboard</h1>
-<div class="mb-3">
-    <a asp-controller="Dashboard" asp-action="Create" class="btn btn-primary">Create New User</a>
-</div>
+
+<!-- Show "Create New User" button only for Admins and HRs -->
+@if (ViewBag.UserRoles == "Admin" || ViewBag.UserRoles == "HR")
+{
+    <div class="mb-3">
+        <a asp-controller="Dashboard" asp-action="Create" class="btn btn-primary">Create New User</a>
+    </div>
+}
+
+
 @if (Model != null && Model.Any())
 {
     <table class="table">
@@ -33,9 +40,19 @@
                     <td>@user.Address</td>
                     <td>@user.RoleName</td>
                     <td>
-                        <!-- Add buttons for editing and deleting users -->
-                        <a asp-controller="Dashboard" asp-action="Edit" asp-route-id="@user.Id" class="btn btn-warning">Edit</a>
-                        <a asp-controller="Dashboard" asp-action="Delete" asp-route-id="@user.Id" class="btn btn-danger">Delete</a>
+                        <!-- Actions based on user role -->
+                        @if (ViewBag.UserRoles == "Admin")
+                        {
+                            <a asp-controller="Dashboard" asp-action="Edit" asp-route-id="@user.Id" class="btn btn-warning">Edit</a>
+                            <a asp-controller="Dashboard" asp-action="Delete" asp-route-id="@user.Id" class="btn btn-danger">Delete</a>
+                        }
+                        else if (ViewBag.UserRoles == "HR" && @user.CreatedById == ViewBag.UserId)
+                        {
+                            <a asp-controller="Dashboard" asp-action="Edit" asp-route-id="@user.Id" class="btn btn-warning">Edit</a>
+                            <a asp-controller="Dashboard" asp-action="Delete" asp-route-id="@user.Id" class="btn btn-danger">Delete</a>
+                        }
+
+                        <!-- Employees cannot see edit or delete buttons -->
                     </td>
                 </tr>
             }

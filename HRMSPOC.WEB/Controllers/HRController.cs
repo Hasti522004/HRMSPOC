@@ -77,9 +77,26 @@ namespace HRMSPOC.WEB.Controllers
                         return RedirectToAction("Index", "HR"); // Redirect to Index
                     }
                 }
+                else
+                {
+                    // Log the validation errors
+                    foreach (var key in ModelState.Keys)
+                    {
+                        var errors = ModelState[key].Errors;
+                        if (errors.Any())
+                        {
+                            Console.WriteLine($"Field: {key}");
+                            foreach (var error in errors)
+                            {
+                                Console.WriteLine($"Error: {error.ErrorMessage}");
+                            }
+                        }
+                    }
+                }
             }
             return View(user);
         }
+
 
         // GET: User/Edit/{id}
         public async Task<IActionResult> Edit(string id)

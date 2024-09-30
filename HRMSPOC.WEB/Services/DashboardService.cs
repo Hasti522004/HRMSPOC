@@ -1,18 +1,13 @@
 ﻿using HRMSPOC.WEB.Models;
 using HRMSPOC.WEB.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Net.Http.Json;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace HRMSPOC.WEB.Services
 {
     public class DashboardService
     {
         private readonly HttpClient _httpClient;
-        private readonly IHttpContextAccessor _httpContextAccessor;  // Added for session access
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public DashboardService(HttpClient httpClient, IHttpContextAccessor httpContextAccessor)
         {
@@ -45,7 +40,8 @@ namespace HRMSPOC.WEB.Services
                             PhoneNumber = user.GetProperty("phoneNumber").GetString(),
                             Address = user.GetProperty("address").GetString(),
                             UserName = user.GetProperty("userName").GetString(),
-                            RoleName = user.GetProperty("roleName").GetString()
+                            RoleName = user.GetProperty("roleName").GetString(),
+                            CreatedById = user.GetProperty("createdBy").GetString()
                         });
                     }
 

@@ -25,16 +25,23 @@ namespace HRMSPOC.WEB.Controllers
             if (HttpContext.Session.TryGetValue("OrganizationId", out var orgIdBytes))
             {
                 var organizationId = new Guid(orgIdBytes);
+               
+                var userId = HttpContext.Session.GetString("UserId");
+                var userRoles = HttpContext.Session.GetString("UserRoles");
 
-                // Call the service to get users by organization ID
+                // Set ViewBag properties
+                ViewBag.UserId = userId;
+                ViewBag.UserRoles = userRoles;
+
+                //// Call the service to get users by organization ID
                 var users = await _dashboardService.GetUsersByOrganizationIdAsync(organizationId);
-                var adminUser = users.FirstOrDefault(u => u.RoleName == "Admin");
+                //var adminUser = users.FirstOrDefault(u => u.RoleName == "Admin");
 
-                if (adminUser != null)
-                {
-                    // Store the Admin user's Id in the session as CreatedById
-                    HttpContext.Session.SetString("CreatedById", adminUser.Id);
-                }
+                //if (adminUser != null)
+                //{
+                //    // Store the Admin user's Id in the session as CreatedById
+                //    HttpContext.Session.SetString("CreatedById", adminUser.Id);
+                //}
                 return View(users);
             }
 
