@@ -13,8 +13,5 @@
         public string? PasswordHash { get; set;}
 
         public string? CreatedById { get; set; }
-        // Additional properties for actions
-        //public bool CanEdit { get; set; }      // Determines if the user can be edited
-        //public bool CanDelete { get; set; }    // Determines if the user can be deleted
     }
 }

@@ -21,8 +21,7 @@
         public string? Address { get; set; }
 
         [Phone(ErrorMessage = "Invalid phone number.")]
-        public string? PhoneNumber { get; set; }  // Optional phone number field
-
+        public string? PhoneNumber { get; set; } 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public Guid CreatedBy { get; set; }
