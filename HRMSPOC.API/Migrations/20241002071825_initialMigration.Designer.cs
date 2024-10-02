@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HRMSPOC.API.Migrations
 {
     [DbContext(typeof(HRMSDbContext))]
-    [Migration("20240930092256_init")]
-    partial class init
+    [Migration("20241002071825_initialMigration")]
+    partial class initialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -146,6 +146,30 @@ namespace HRMSPOC.API.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("Users", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "86eca302-2654-4ebb-95ec-45fde07087be",
+                            AccessFailedCount = 0,
+                            Address = "123 Admin St",
+                            ConcurrencyStamp = "0f3116cb-1aa3-4ea0-baa0-606a2d498092",
+                            CreatedAt = new DateTime(2024, 10, 2, 7, 18, 25, 228, DateTimeKind.Utc).AddTicks(5710),
+                            CreatedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            Email = "superadmin@admin.com",
+                            EmailConfirmed = true,
+                            FirstName = "Super",
+                            LastName = "Admin",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "SUPERADMIN@ADMIN.COM",
+                            NormalizedUserName = "SUPERADMIN@ADMIN.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAEFK41Nh0h3ufaUM2fDmZORq8nCgiuTbQRNqyP8TW7BMVyfkw/E5jCwhs6Zc3sRJK/g==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "2098fbc4-d152-4c98-8f80-699277ad9127",
+                            TwoFactorEnabled = false,
+                            UserName = "superadmin@admin.com",
+                            isdelete = false
+                        });
                 });
 
             modelBuilder.Entity("HRMSPOC.API.Models.Organization", b =>
@@ -210,6 +234,32 @@ namespace HRMSPOC.API.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "73c825c3-d917-4718-af63-5e9b25f5770b",
+                            Name = "SuperAdmin",
+                            NormalizedName = "SUPERADMIN"
+                        },
+                        new
+                        {
+                            Id = "05732d15-caea-4ba6-8795-70e9c7887e03",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "e46cc1cd-ac1c-432a-a666-1e91ac2279a7",
+                            Name = "HR",
+                            NormalizedName = "HR"
+                        },
+                        new
+                        {
+                            Id = "addd401d-5776-40ce-bff1-b056e8e63cef",
+                            Name = "Employee",
+                            NormalizedName = "EMPLOYEE"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -297,6 +347,13 @@ namespace HRMSPOC.API.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "86eca302-2654-4ebb-95ec-45fde07087be",
+                            RoleId = "73c825c3-d917-4718-af63-5e9b25f5770b"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>

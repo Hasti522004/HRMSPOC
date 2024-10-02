@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace HRMSPOC.API.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class initialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -218,6 +220,27 @@ namespace HRMSPOC.API.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { "05732d15-caea-4ba6-8795-70e9c7887e03", null, "Admin", "ADMIN" },
+                    { "73c825c3-d917-4718-af63-5e9b25f5770b", null, "SuperAdmin", "SUPERADMIN" },
+                    { "addd401d-5776-40ce-bff1-b056e8e63cef", null, "Employee", "EMPLOYEE" },
+                    { "e46cc1cd-ac1c-432a-a666-1e91ac2279a7", null, "HR", "HR" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Id", "AccessFailedCount", "Address", "ConcurrencyStamp", "CreatedAt", "CreatedBy", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName", "isdelete" },
+                values: new object[] { "86eca302-2654-4ebb-95ec-45fde07087be", 0, "123 Admin St", "0f3116cb-1aa3-4ea0-baa0-606a2d498092", new DateTime(2024, 10, 2, 7, 18, 25, 228, DateTimeKind.Utc).AddTicks(5710), new Guid("00000000-0000-0000-0000-000000000000"), "superadmin@admin.com", true, "Super", "Admin", false, null, "SUPERADMIN@ADMIN.COM", "SUPERADMIN@ADMIN.COM", "AQAAAAIAAYagAAAAEFK41Nh0h3ufaUM2fDmZORq8nCgiuTbQRNqyP8TW7BMVyfkw/E5jCwhs6Zc3sRJK/g==", null, false, "2098fbc4-d152-4c98-8f80-699277ad9127", false, "superadmin@admin.com", false });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUserRoles",
+                columns: new[] { "RoleId", "UserId" },
+                values: new object[] { "73c825c3-d917-4718-af63-5e9b25f5770b", "86eca302-2654-4ebb-95ec-45fde07087be" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
