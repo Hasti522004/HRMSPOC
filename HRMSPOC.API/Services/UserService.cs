@@ -1,8 +1,6 @@
 ﻿using HRMSPOC.API.DTOs;
-using HRMSPOC.API.Models;
 using HRMSPOC.API.Repositories.Interfaces;
 using HRMSPOC.API.Services.Interface;
-using Microsoft.AspNetCore.Identity;
 
 namespace HRMSPOC.API.Services
 {
@@ -10,73 +8,81 @@ namespace HRMSPOC.API.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly IOrganizationRepository _organizationRepository;
-        private readonly UserManager<ApplicationUser> _userManager;
         private readonly IUserOrganizationRepository _userOrganizationRepository;
-        public UserService(IUserRepository userRepository, IOrganizationRepository organizationRepository,UserManager<ApplicationUser> userManager, IUserOrganizationRepository userOrganizationRepository)
+
+        public UserService(IUserRepository userRepository, IOrganizationRepository organizationRepository, IUserOrganizationRepository userOrganizationRepository)
         {
             _userRepository = userRepository;
             _organizationRepository = organizationRepository;
-            _userManager = userManager;
             _userOrganizationRepository = userOrganizationRepository;
         }
 
-        public async Task<IEnumerable<ApplicationUser>> GetUsersAsync()
+        public async Task<IEnumerable<ApplicationUserDto>> GetUsersAsync()
         {
             return await _userRepository.GetUsersAsync();
         }
 
-        public async Task<ApplicationUser> GetUserByIdAsync(string id)
+        public async Task<ApplicationUserDto> GetUserByIdAsync(string id)
         {
             return await _userRepository.GetUserByIdAsync(id);
         }
 
-        public async Task<ApplicationUser> CreateUserAsync(ApplicationUser user, string role)
+        public async Task<ApplicationUserDto> CreateUserAsync(CreateUserDto user, string role)
         {
             // Validate the CreatedBy field
             if (user.CreatedBy != Guid.Empty)
             {
                 var createdById = user.CreatedBy;
-
-                bool isOrganization = await _organizationRepository.IsOrganizationExists(createdById);
-
-                // Create the user
                 var result = await _userRepository.CreateUserAsync(user);
 
                 if (result != null)
                 {
+                    // If role is provided, assign it
                     if (!string.IsNullOrEmpty(role))
                     {
-                        await _userManager.AddToRoleAsync(result, role);
+                        await _userRepository.AssignRoleAsync(result.Id, role);
+
+                        // Create a UserOrganizationDto to add the user to the organization
                         var organizationId = await _userOrganizationRepository.GetOrganizationIdByUserIdAsync(createdById.ToString());
                         if (organizationId.HasValue)
                         {
-                            await _userOrganizationRepository.AddUserOrganizationAsync(result.Id, organizationId.Value);
+                            var userOrganizationDto = new UserOrganizationDto
+                            {
+                                UserId = result.Id,
+                                OrganizationId = organizationId.Value
+                            };
+                            await _userOrganizationRepository.AddUserOrganizationAsync(userOrganizationDto);
                         }
-
-                    }
-                    else if (isOrganization)
-                    {
-                        await _userManager.AddToRoleAsync(result, "HR");
-                        await _userOrganizationRepository.AddUserOrganizationAsync(result.Id, createdById);
                     }
                     else
                     {
-                        await _userManager.AddToRoleAsync(result, "Employee");
+                        // Determine if the user is an organization (HR) or employee
+                        bool isOrganization = await _organizationRepository.IsOrganizationExists(createdById);
+                        string defaultRole = isOrganization ? "HR" : "Employee";
+
+                        await _userRepository.AssignRoleAsync(result.Id, defaultRole);
+
+                        // Add the user to the appropriate organization
                         var organizationId = await _userOrganizationRepository.GetOrganizationIdByUserIdAsync(createdById.ToString());
                         if (organizationId.HasValue)
                         {
-                            await _userOrganizationRepository.AddUserOrganizationAsync(result.Id, organizationId.Value);
+                            var userOrganizationDto = new UserOrganizationDto
+                            {
+                                UserId = result.Id,
+                                OrganizationId = organizationId.Value
+                            };
+                            await _userOrganizationRepository.AddUserOrganizationAsync(userOrganizationDto);
                         }
                     }
                 }
 
                 return result;
             }
+
             return await _userRepository.CreateUserAsync(user);
         }
 
-
-        public async Task UpdateUserAsync(ApplicationUser user)
+        public async Task UpdateUserAsync(ApplicationUserDto user)
         {
             await _userRepository.UpdateUserAsync(user);
         }
@@ -85,10 +91,12 @@ namespace HRMSPOC.API.Services
         {
             await _userRepository.DeleteUserAsync(id);
         }
-        public async Task<IEnumerable<ApplicationUser>> GetUsersByCreatedByIdAsync(Guid createdbyId)
+
+        public async Task<IEnumerable<ApplicationUserDto>> GetUsersByCreatedByIdAsync(Guid createdById)
         {
-            return await _userRepository.GetUsersByCreatedByIdAsync(createdbyId);
+            return await _userRepository.GetUsersByCreatedByIdAsync(createdById);
         }
+
         public async Task<IEnumerable<UserWithRoleDto>> GetUsersByOrganizationIdAsync(Guid organizationId)
         {
             return await _userRepository.GetUsersByOrganizationIdAsync(organizationId);

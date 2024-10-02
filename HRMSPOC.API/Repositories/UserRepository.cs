@@ -1,4 +1,5 @@
-﻿using HRMSPOC.API.Data;
+﻿using AutoMapper;
+using HRMSPOC.API.Data;
 using HRMSPOC.API.DTOs;
 using HRMSPOC.API.Models;
 using HRMSPOC.API.Repositories.Interfaces;
@@ -12,61 +13,64 @@ namespace HRMSPOC.API.Repositories
     {
         private readonly HRMSDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
-        
-        public UserRepository(HRMSDbContext context, UserManager<ApplicationUser> userManager)
+        private readonly IMapper _mapper;
+
+        public UserRepository(HRMSDbContext context, UserManager<ApplicationUser> userManager, IMapper mapper)
         {
             _context = context;
             _userManager = userManager;
+            _mapper = mapper;
         }
 
-        public async Task<IEnumerable<ApplicationUser>> GetUsersAsync()
+        public async Task<IEnumerable<ApplicationUserDto>> GetUsersAsync()
         {
-            return await _context.Users.Where(u=>!u.isdelete).ToListAsync();
+            var users = await _context.Users.Where(u => !u.IsDeleted).ToListAsync();
+            Console.WriteLine(users.Count);
+            var userDtos = _mapper.Map<IEnumerable<ApplicationUserDto>>(users);
+            Console.WriteLine(userDtos);
+
+            return userDtos;
         }
 
-        public async Task<ApplicationUser> GetUserByIdAsync(string id)
+        public async Task<ApplicationUserDto> GetUserByIdAsync(string id)
         {
-            return await _userManager.Users
-                .FirstOrDefaultAsync(u => u.Id == id && !u.isdelete);
+            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == id && !u.IsDeleted);
+            return _mapper.Map<ApplicationUserDto>(user);
         }
 
-        public async Task<ApplicationUser> CreateUserAsync(ApplicationUser user)
+        public async Task<ApplicationUserDto> CreateUserAsync(CreateUserDto userDto)
         {
+            var user = _mapper.Map<ApplicationUser>(userDto);
             user.UserName = user.Email;
-            var result = await _userManager.CreateAsync(user,user.PasswordHash);
-            if(user.CreatedBy != Guid.Empty)
-            {
-                var createdById = user.CreatedBy.ToString();
-            }
-            if (result.Succeeded)
-            {
-                return user;
-            }
-            throw new Exception("User creation failed: " + string.Join(", ", result.Errors));
 
+            var result = await _userManager.CreateAsync(user, userDto.Password);
+            if (!result.Succeeded)
+            {
+                Console.WriteLine("User creation failed:");
+                foreach (var error in result.Errors)
+                {
+                    Console.WriteLine($"- {error.Code}: {error.Description}");
+                }
+                throw new Exception("User creation failed: " + string.Join(", ", result.Errors));
+            }
+
+            return _mapper.Map<ApplicationUserDto>(user);
         }
 
-        public async Task UpdateUserAsync(ApplicationUser user)
+        public async Task UpdateUserAsync(ApplicationUserDto userDto)
         {
-            var existingUser = await _userManager.FindByIdAsync(user.Id);
-            if (existingUser == null)
+            var existingUser = await _userManager.FindByIdAsync(userDto.Id);
+            if (existingUser == null || existingUser.IsDeleted)
             {
-                throw new Exception("User not found.");
+                throw new Exception("User not found or deleted.");
             }
-            if (existingUser.isdelete)
-            {
-                throw new Exception("User was Deleted");
-            }
-            existingUser.FirstName = user.FirstName;
-            existingUser.LastName = user.LastName;
-            existingUser.Address = user.Address;
-            existingUser.PhoneNumber = user.PhoneNumber;  
-            existingUser.Email = user.Email;
 
-            if (!string.IsNullOrWhiteSpace(user.PasswordHash))
+            _mapper.Map(userDto, existingUser);
+
+            if (!string.IsNullOrWhiteSpace(userDto.Password))
             {
                 var token = await _userManager.GeneratePasswordResetTokenAsync(existingUser);
-                var result = await _userManager.ResetPasswordAsync(existingUser, token, user.PasswordHash);
+                var result = await _userManager.ResetPasswordAsync(existingUser, token, userDto.Password);
 
                 if (!result.Succeeded)
                 {
@@ -77,34 +81,40 @@ namespace HRMSPOC.API.Repositories
             await _userManager.UpdateAsync(existingUser);
         }
 
-
         public async Task DeleteUserAsync(string id)
         {
-            var user = await GetUserByIdAsync(id);
+            var user = await _userManager.FindByIdAsync(id);
             if (user != null)
             {
-                user.isdelete = true;
+                user.IsDeleted = true;
                 await _userManager.UpdateAsync(user);
             }
         }
-        public async Task<IEnumerable<ApplicationUser>> GetUsersByCreatedByIdAsync(Guid createdbyId)
+
+        public async Task<IEnumerable<ApplicationUserDto>> GetUsersByCreatedByIdAsync(Guid createdById)
         {
-            return await _userManager.Users
-                .Where(u => u.CreatedBy == createdbyId && !u.isdelete)
+            var users = await _userManager.Users
+                .Where(u => u.CreatedBy == createdById && !u.IsDeleted)
                 .ToListAsync();
+
+            return _mapper.Map<IEnumerable<ApplicationUserDto>>(users);
         }
 
         public async Task<IEnumerable<UserWithRoleDto>> GetUsersByOrganizationIdAsync(Guid organizationId)
         {
             var organizationIdParam = new SqlParameter("@OrganizationId", organizationId);
-
-            var users = await _context.Set<UserWithRoleDto>()
-             .FromSqlRaw("EXEC sp_GetUsersByOrganizationId @OrganizationId", organizationIdParam)
-             .ToListAsync();
-
-            return users;
+            return await _context.Set<UserWithRoleDto>()
+                .FromSqlRaw("EXEC sp_GetUsersByOrganizationId @OrganizationId", organizationIdParam)
+                .ToListAsync();
         }
 
-
+        public async Task AssignRoleAsync(string userId, string role)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user != null)
+            {
+                await _userManager.AddToRoleAsync(user, role);
+            }
+        }
     }
 }

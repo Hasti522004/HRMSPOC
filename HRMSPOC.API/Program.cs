@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using HRMSPOC.API.Middleware;
 using Microsoft.OpenApi.Models;
+using HRMSPOC.API.Mapping;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -53,6 +54,8 @@ builder.Services.AddSwaggerGen(options =>
 // Register DbContext
 builder.Services.AddDbContext<HRMSDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("conn")));
+
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 // Identity Services
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()

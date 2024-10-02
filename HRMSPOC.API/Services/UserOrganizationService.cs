@@ -1,4 +1,5 @@
-﻿using HRMSPOC.API.Repositories.Interfaces;
+﻿using HRMSPOC.API.DTOs;
+using HRMSPOC.API.Repositories.Interfaces;
 using HRMSPOC.API.Services.Interface;
 
 namespace HRMSPOC.API.Services
@@ -16,9 +17,9 @@ namespace HRMSPOC.API.Services
         {
             return await _userOrganizationRepository.GetOrganizationIdByUserIdAsync(userId);
         }
-        public async Task<bool> AddUserOrganizationAsync(string userId, Guid organizationId)
+        public async Task<bool> AddUserOrganizationAsync(UserOrganizationDto userOrganizationDto)
         {
-            return await _userOrganizationRepository.AddUserOrganizationAsync(userId, organizationId);
+            return await _userOrganizationRepository.AddUserOrganizationAsync(userOrganizationDto);
         }
     }
 }

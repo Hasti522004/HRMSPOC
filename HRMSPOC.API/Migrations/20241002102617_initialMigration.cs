@@ -51,7 +51,7 @@ namespace HRMSPOC.API.Migrations
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    isdelete = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -226,21 +226,21 @@ namespace HRMSPOC.API.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "05732d15-caea-4ba6-8795-70e9c7887e03", null, "Admin", "ADMIN" },
-                    { "73c825c3-d917-4718-af63-5e9b25f5770b", null, "SuperAdmin", "SUPERADMIN" },
-                    { "addd401d-5776-40ce-bff1-b056e8e63cef", null, "Employee", "EMPLOYEE" },
-                    { "e46cc1cd-ac1c-432a-a666-1e91ac2279a7", null, "HR", "HR" }
+                    { "5436f448-80f2-4c04-a63c-5ec8c0f3ab45", null, "Employee", "EMPLOYEE" },
+                    { "58912799-e566-46c7-a04d-1820583583e2", null, "HR", "HR" },
+                    { "c3abd2de-cd82-4b95-a48c-d6ad9f2ea03b", null, "SuperAdmin", "SUPERADMIN" },
+                    { "c809dfc9-0931-408d-b9c1-91d1e92e6ec6", null, "Admin", "ADMIN" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Users",
-                columns: new[] { "Id", "AccessFailedCount", "Address", "ConcurrencyStamp", "CreatedAt", "CreatedBy", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName", "isdelete" },
-                values: new object[] { "86eca302-2654-4ebb-95ec-45fde07087be", 0, "123 Admin St", "0f3116cb-1aa3-4ea0-baa0-606a2d498092", new DateTime(2024, 10, 2, 7, 18, 25, 228, DateTimeKind.Utc).AddTicks(5710), new Guid("00000000-0000-0000-0000-000000000000"), "superadmin@admin.com", true, "Super", "Admin", false, null, "SUPERADMIN@ADMIN.COM", "SUPERADMIN@ADMIN.COM", "AQAAAAIAAYagAAAAEFK41Nh0h3ufaUM2fDmZORq8nCgiuTbQRNqyP8TW7BMVyfkw/E5jCwhs6Zc3sRJK/g==", null, false, "2098fbc4-d152-4c98-8f80-699277ad9127", false, "superadmin@admin.com", false });
+                columns: new[] { "Id", "AccessFailedCount", "Address", "ConcurrencyStamp", "CreatedAt", "CreatedBy", "Email", "EmailConfirmed", "FirstName", "IsDeleted", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[] { "9a5f1bdf-4c22-43d1-a479-a4ae61d8ad2a", 0, "123 Admin St", "1dbe3533-a96b-495c-b369-f43e18329c77", new DateTime(2024, 10, 2, 10, 26, 17, 311, DateTimeKind.Utc).AddTicks(14), new Guid("00000000-0000-0000-0000-000000000000"), "superadmin@admin.com", true, "Super", false, "Admin", false, null, "SUPERADMIN@ADMIN.COM", "SUPERADMIN@ADMIN.COM", "AQAAAAIAAYagAAAAEOUNn0w4LP5HEEVQyazdrNLPyaJQ4Qn1dKkmSyQ4ln8S3PbT4WKhw5IV+VHf7JGl3A==", null, false, "6c39e6a5-a0a2-4b2b-b6c9-5acc61606e52", false, "superadmin@admin.com" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",
                 columns: new[] { "RoleId", "UserId" },
-                values: new object[] { "73c825c3-d917-4718-af63-5e9b25f5770b", "86eca302-2654-4ebb-95ec-45fde07087be" });
+                values: new object[] { "c3abd2de-cd82-4b95-a48c-d6ad9f2ea03b", "9a5f1bdf-4c22-43d1-a479-a4ae61d8ad2a" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",

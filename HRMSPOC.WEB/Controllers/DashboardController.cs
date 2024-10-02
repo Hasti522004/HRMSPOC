@@ -2,10 +2,6 @@
 using HRMSPOC.WEB.Services;
 using HRMSPOC.WEB.ViewModel;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Security.Cryptography;
-using System.Threading.Tasks;
 
 namespace HRMSPOC.WEB.Controllers
 {

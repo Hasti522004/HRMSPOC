@@ -8,12 +8,13 @@ namespace HRMSPOC.API.Repositories.Interfaces
 {
     public interface IUserRepository
     {
-        Task<IEnumerable<ApplicationUser>> GetUsersAsync();
-        Task<ApplicationUser> GetUserByIdAsync(string id);
-        Task<ApplicationUser> CreateUserAsync(ApplicationUser user);
-        Task UpdateUserAsync(ApplicationUser user);
+        Task<IEnumerable<ApplicationUserDto>> GetUsersAsync();
+        Task<ApplicationUserDto> GetUserByIdAsync(string id);
+        Task<ApplicationUserDto> CreateUserAsync(CreateUserDto user);
+        Task UpdateUserAsync(ApplicationUserDto user);
         Task DeleteUserAsync(string id);
-        Task<IEnumerable<ApplicationUser>> GetUsersByCreatedByIdAsync(Guid createdbyId);
+        Task<IEnumerable<ApplicationUserDto>> GetUsersByCreatedByIdAsync(Guid createdbyId);
         Task<IEnumerable<UserWithRoleDto>> GetUsersByOrganizationIdAsync(Guid organizationId);
+        Task AssignRoleAsync(string userId, string role);
     }
 }

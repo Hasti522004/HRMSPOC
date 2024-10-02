@@ -1,4 +1,5 @@
-﻿using HRMSPOC.API.Models;
+﻿using HRMSPOC.API.DTOs;
+using HRMSPOC.API.Models;
 using HRMSPOC.API.Repositories.Interfaces;
 using HRMSPOC.API.Services.Interface;
 using Microsoft.AspNetCore.Identity;
@@ -20,22 +21,22 @@ namespace HRMSPOC.API.Services
             _userManager = userManager;
         }
 
-        public async Task<IEnumerable<Organization>> GetOrganizationsAsync()
+        public async Task<IEnumerable<OrganizationDto>> GetOrganizationsAsync()
         {
             return await _organizationRepository.GetOrganizationsAsync();
         }
 
-        public async Task<Organization> GetOrganizationByIdAsync(Guid id)
+        public async Task<OrganizationDto> GetOrganizationByIdAsync(Guid id)
         {
             return await _organizationRepository.GetOrganizationByIdAsync(id);
         }
 
-        public async Task<Organization> CreateOrganizationAsync(Organization organization)
+        public async Task<OrganizationDto> CreateOrganizationAsync(OrganizationDto organization)
         {
             return await _organizationRepository.CreateOrganizationAsync(organization);
         }
 
-        public async Task UpdateOrganizationAsync(Organization organization)
+        public async Task UpdateOrganizationAsync(OrganizationDto organization)
         {
             await _organizationRepository.UpdateOrganizationAsync(organization);
         }
@@ -45,35 +46,24 @@ namespace HRMSPOC.API.Services
             await _organizationRepository.DeleteOrganizationAsync(id);
         }
 
-        public async Task<Organization> CreateOrganizationWithAdminAsync(Organization organization, Guid superAdminId)
+        public async Task<OrganizationDto> CreateOrganizationWithAdminAsync(OrganizationDto organization, Guid superAdminId)
         {
             var createdOrganization = await _organizationRepository.CreateOrganizationAsync(organization);
 
-            var adminUser = new ApplicationUser
+            var adminUser = new ApplicationUserDto
             {
-                UserName = "admin@" + createdOrganization.Name.Replace(" ", "").ToLower() + ".com",
                 Email = "admin@" + createdOrganization.Name.Replace(" ", "").ToLower() + ".com",
                 FirstName = "Admin",
                 LastName = createdOrganization.Name,
-                EmailConfirmed = true,
                 CreatedBy = superAdminId
             };
 
-            // Create the Admin role if it doesn't exist
-            if (!await _roleManager.RoleExistsAsync("Admin"))
-            {
-                await _roleManager.CreateAsync(new IdentityRole("Admin"));
-            }
+            await _organizationRepository.CreateRoleIfNotExistsAsync("Admin");
 
             await _organizationRepository.CreateAdminUserAsync(adminUser, createdOrganization.Id);
 
-            // Assign the Admin role to the created user
-            var result = await _userManager.AddToRoleAsync(adminUser, "Admin");
-            if (!result.Succeeded)
-            {
-                throw new Exception("Failed to assign admin role to user.");
-            }
-
+            // Assign the Admin role to the created user in the repository
+            await _organizationRepository.AssignRoleToUserAsync(adminUser, "Admin");
             return createdOrganization;
         }
 

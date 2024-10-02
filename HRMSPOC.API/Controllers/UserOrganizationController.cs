@@ -1,4 +1,5 @@
-﻿using HRMSPOC.API.Services.Interface;
+﻿using HRMSPOC.API.DTOs;
+using HRMSPOC.API.Services.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -32,14 +33,14 @@ namespace HRMSPOC.API.Controllers
         [HttpPost]
         [Route("add")]
         [Authorize(Roles = "SuperAdmin,Admin")]
-        public async Task<IActionResult> AddUserToOrganization(string userId, Guid organizationId)
+        public async Task<IActionResult> AddUserToOrganization([FromBody] UserOrganizationDto userOrganizationDto)
         {
-            if (string.IsNullOrEmpty(userId) || organizationId == Guid.Empty)
+            if (string.IsNullOrEmpty(userOrganizationDto.UserId) || userOrganizationDto.OrganizationId == Guid.Empty)
             {
                 return BadRequest("User ID and Organization ID cannot be empty.");
             }
 
-            bool isCreated = await _userOrganizationService.AddUserOrganizationAsync(userId, organizationId);
+            bool isCreated = await _userOrganizationService.AddUserOrganizationAsync(userOrganizationDto);
             return Ok("User successfully added to organization.");
         }
     }

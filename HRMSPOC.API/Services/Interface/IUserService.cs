@@ -8,12 +8,12 @@ namespace HRMSPOC.API.Services.Interface
 {
     public interface IUserService
     {
-        Task<IEnumerable<ApplicationUser>> GetUsersAsync();
-        Task<ApplicationUser> GetUserByIdAsync(string id);
-        Task<ApplicationUser> CreateUserAsync(ApplicationUser user,string role);
-        Task UpdateUserAsync(ApplicationUser user);
+        Task<IEnumerable<ApplicationUserDto>> GetUsersAsync();
+        Task<ApplicationUserDto> GetUserByIdAsync(string id);
+        Task<ApplicationUserDto> CreateUserAsync(CreateUserDto user,string role);
+        Task UpdateUserAsync(ApplicationUserDto user);
         Task DeleteUserAsync(string id);
-        Task<IEnumerable<ApplicationUser>> GetUsersByCreatedByIdAsync(Guid createdbyId);
+        Task<IEnumerable<ApplicationUserDto>> GetUsersByCreatedByIdAsync(Guid createdbyId);
         Task<IEnumerable<UserWithRoleDto>> GetUsersByOrganizationIdAsync(Guid organizationId);
     }
 }

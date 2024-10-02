@@ -69,7 +69,7 @@ namespace HRMSPOC.API.Data
                     FirstName = "Super",
                     LastName = "Admin",
                     Address = "123 Admin St",
-                    isdelete = false,
+                    IsDeleted = false,
                     EmailConfirmed = true,
                     NormalizedEmail = "SUPERADMIN@ADMIN.COM",
                     NormalizedUserName = "SUPERADMIN@ADMIN.COM",
