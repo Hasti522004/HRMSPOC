@@ -26,7 +26,8 @@ namespace HRMSPOC.API.Repositories
 
         public async Task<ApplicationUser> GetUserByIdAsync(string id)
         {
-            return await _userManager.Users.Where(u => u.Id == id && !u.isdelete).FirstOrDefaultAsync();
+            return await _userManager.Users
+                .FirstOrDefaultAsync(u => u.Id == id && !u.isdelete);
         }
 
         public async Task<ApplicationUser> CreateUserAsync(ApplicationUser user)
