@@ -19,17 +19,33 @@ namespace HRMSPOC.API.Services
 
         public async Task<IEnumerable<ApplicationUserDto>> GetUsersAsync()
         {
-            return await _userRepository.GetUsersAsync();
+            var users = await _userRepository.GetUsersAsync();
+            if (users == null || !users.Any())
+            {
+                throw new Exception("No users found in the system.");
+            }
+            return users;
         }
 
         public async Task<ApplicationUserDto> GetUserByIdAsync(string id)
         {
-            return await _userRepository.GetUserByIdAsync(id);
+            if (string.IsNullOrEmpty(id))
+            {
+                throw new ArgumentException("User ID cannot be null or empty.");
+            }
+
+            var user = await _userRepository.GetUserByIdAsync(id);
+
+            if (user == null)
+            {
+                throw new Exception($"User with ID {id} not found.");
+            }
+
+            return user;
         }
 
         public async Task<ApplicationUserDto> CreateUserAsync(CreateUserDto user, string role)
         {
-            // Validate the CreatedBy field
             if (user.CreatedBy != Guid.Empty)
             {
                 var createdById = user.CreatedBy;
@@ -37,12 +53,10 @@ namespace HRMSPOC.API.Services
 
                 if (result != null)
                 {
-                    // If role is provided, assign it
                     if (!string.IsNullOrEmpty(role))
                     {
                         await _userRepository.AssignRoleAsync(result.Id, role);
 
-                        // Create a UserOrganizationDto to add the user to the organization
                         var organizationId = await _userOrganizationRepository.GetOrganizationIdByUserIdAsync(createdById.ToString());
                         if (organizationId.HasValue)
                         {
@@ -56,13 +70,11 @@ namespace HRMSPOC.API.Services
                     }
                     else
                     {
-                        // Determine if the user is an organization (HR) or employee
                         bool isOrganization = await _organizationRepository.IsOrganizationExists(createdById);
                         string defaultRole = isOrganization ? "HR" : "Employee";
 
                         await _userRepository.AssignRoleAsync(result.Id, defaultRole);
 
-                        // Add the user to the appropriate organization
                         var organizationId = await _userOrganizationRepository.GetOrganizationIdByUserIdAsync(createdById.ToString());
                         if (organizationId.HasValue)
                         {
@@ -84,22 +96,69 @@ namespace HRMSPOC.API.Services
 
         public async Task UpdateUserAsync(ApplicationUserDto user)
         {
+            var existingUser = await _userRepository.GetUserByIdAsync(user.Id);
+            if (existingUser == null)
+            {
+                throw new Exception("User not found or deleted.");
+            }
+            if (!string.IsNullOrWhiteSpace(user.Password))
+            {
+                var token = await _userRepository.GeneratePasswordResetTokenAsync(user.Id);
+                var result = await _userRepository.ResetPasswordAsync(user.Id, token, user.Password);
+
+                if (!result.Succeeded)
+                {
+                    throw new Exception("Password update failed: " + string.Join(", ", result.Errors));
+                }
+            }
+
             await _userRepository.UpdateUserAsync(user);
+
         }
 
         public async Task DeleteUserAsync(string id)
         {
+            var existingUser = await _userRepository.GetUserByIdAsync(id);
+            if (existingUser == null || existingUser.IsDeleted)
+            {
+                throw new Exception("User not found or already deleted.");
+            }
+
             await _userRepository.DeleteUserAsync(id);
         }
 
         public async Task<IEnumerable<ApplicationUserDto>> GetUsersByCreatedByIdAsync(Guid createdById)
         {
-            return await _userRepository.GetUsersByCreatedByIdAsync(createdById);
+            if (createdById == Guid.Empty)
+            {
+                throw new ArgumentException("CreatedById cannot be an empty GUID.", nameof(createdById));
+            }
+
+            var users = await _userRepository.GetUsersByCreatedByIdAsync(createdById);
+
+            if (users == null || !users.Any())
+            {
+                throw new Exception("No users found for the specified CreatedById.");
+            }
+
+            return users;
         }
 
         public async Task<IEnumerable<UserWithRoleDto>> GetUsersByOrganizationIdAsync(Guid organizationId)
         {
-            return await _userRepository.GetUsersByOrganizationIdAsync(organizationId);
+            if (organizationId == Guid.Empty)
+            {
+                throw new ArgumentException("OrganizationId cannot be an empty GUID.", nameof(organizationId));
+            }
+
+            var users = await _userRepository.GetUsersByOrganizationIdAsync(organizationId);
+
+            if (users == null || !users.Any())
+            {
+                throw new Exception("No users found for the specified OrganizationId.");
+            }
+
+            return users;
         }
     }
 }

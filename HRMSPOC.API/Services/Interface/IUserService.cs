@@ -1,8 +1,4 @@
 ﻿using HRMSPOC.API.DTOs;
-using HRMSPOC.API.Models;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace HRMSPOC.API.Services.Interface
 {
@@ -10,10 +6,10 @@ namespace HRMSPOC.API.Services.Interface
     {
         Task<IEnumerable<ApplicationUserDto>> GetUsersAsync();
         Task<ApplicationUserDto> GetUserByIdAsync(string id);
-        Task<ApplicationUserDto> CreateUserAsync(CreateUserDto user,string role);
+        Task<ApplicationUserDto> CreateUserAsync(CreateUserDto user, string role);
         Task UpdateUserAsync(ApplicationUserDto user);
         Task DeleteUserAsync(string id);
-        Task<IEnumerable<ApplicationUserDto>> GetUsersByCreatedByIdAsync(Guid createdbyId);
+        Task<IEnumerable<ApplicationUserDto>> GetUsersByCreatedByIdAsync(Guid createdById);
         Task<IEnumerable<UserWithRoleDto>> GetUsersByOrganizationIdAsync(Guid organizationId);
     }
 }

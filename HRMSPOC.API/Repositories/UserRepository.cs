@@ -25,10 +25,7 @@ namespace HRMSPOC.API.Repositories
         public async Task<IEnumerable<ApplicationUserDto>> GetUsersAsync()
         {
             var users = await _context.Users.Where(u => !u.IsDeleted).ToListAsync();
-            Console.WriteLine(users.Count);
             var userDtos = _mapper.Map<IEnumerable<ApplicationUserDto>>(users);
-            Console.WriteLine(userDtos);
-
             return userDtos;
         }
 
@@ -46,11 +43,6 @@ namespace HRMSPOC.API.Repositories
             var result = await _userManager.CreateAsync(user, userDto.Password);
             if (!result.Succeeded)
             {
-                Console.WriteLine("User creation failed:");
-                foreach (var error in result.Errors)
-                {
-                    Console.WriteLine($"- {error.Code}: {error.Description}");
-                }
                 throw new Exception("User creation failed: " + string.Join(", ", result.Errors));
             }
 
@@ -60,34 +52,47 @@ namespace HRMSPOC.API.Repositories
         public async Task UpdateUserAsync(ApplicationUserDto userDto)
         {
             var existingUser = await _userManager.FindByIdAsync(userDto.Id);
-            if (existingUser == null || existingUser.IsDeleted)
-            {
-                throw new Exception("User not found or deleted.");
-            }
 
+            // Map the updated fields from DTO to the existing user
             _mapper.Map(userDto, existingUser);
 
-            if (!string.IsNullOrWhiteSpace(userDto.Password))
-            {
-                var token = await _userManager.GeneratePasswordResetTokenAsync(existingUser);
-                var result = await _userManager.ResetPasswordAsync(existingUser, token, userDto.Password);
+            // Update user fields other than password
+            await _userManager.UpdateAsync(existingUser);
+        }
 
-                if (!result.Succeeded)
-                {
-                    throw new Exception("Password update failed: " + string.Join(", ", result.Errors));
-                }
+        public async Task<string> GeneratePasswordResetTokenAsync(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                throw new Exception("User not found.");
             }
 
-            await _userManager.UpdateAsync(existingUser);
+            return await _userManager.GeneratePasswordResetTokenAsync(user);
+        }
+
+        public async Task<IdentityResult> ResetPasswordAsync(string userId, string token, string newPassword)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                throw new Exception("User not found.");
+            }
+
+            return await _userManager.ResetPasswordAsync(user, token, newPassword);
         }
 
         public async Task DeleteUserAsync(string id)
         {
-            var user = await _userManager.FindByIdAsync(id);
+            var user = await _context.Users.FindAsync(id);
             if (user != null)
             {
                 user.IsDeleted = true;
-                await _userManager.UpdateAsync(user);
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                throw new Exception("User not found.");
             }
         }
 

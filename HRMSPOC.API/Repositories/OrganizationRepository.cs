@@ -37,9 +37,6 @@ namespace HRMSPOC.API.Repositories
                 .Where(o => o.Id == id && !o.isdelete)
                 .FirstOrDefaultAsync();
 
-            if (organization == null)
-                throw new KeyNotFoundException("Organization not found.");
-
             return _mapper.Map<OrganizationDto>(organization);
         }
 
@@ -53,14 +50,10 @@ namespace HRMSPOC.API.Repositories
             return _mapper.Map<OrganizationDto>(organization);
         }
 
-        // Update an existing organization
         public async Task UpdateOrganizationAsync(OrganizationDto organizationDto)
         {
             var organization = await _context.Organization.FindAsync(organizationDto.Id);
-            if (organization == null || organization.isdelete)
-                throw new KeyNotFoundException("Organization not found or deleted.");
 
-            // Map updates from DTO to the entity
             _mapper.Map(organizationDto, organization);
 
             _context.Organization.Update(organization);
@@ -71,13 +64,12 @@ namespace HRMSPOC.API.Repositories
         public async Task DeleteOrganizationAsync(Guid id)
         {
             var organization = await _context.Organization.FindAsync(id);
-            if (organization == null)
-                throw new KeyNotFoundException("Organization not found.");
-
-            // Soft delete by setting isdelete flag
-            organization.isdelete = true;
-            _context.Organization.Update(organization);
-            await _context.SaveChangesAsync();
+            if (organization != null)
+            {
+                organization.isdelete = true;
+                _context.Organization.Update(organization);
+                await _context.SaveChangesAsync();
+            }
         }
 
         // Create an admin user for the organization
@@ -101,8 +93,6 @@ namespace HRMSPOC.API.Repositories
             await _context.UserOrganizations.AddAsync(userOrg);
             await _context.SaveChangesAsync();
         }
-
-        // Check if an organization exists by its Id
         public async Task<bool> IsOrganizationExists(Guid id)
         {
             return await _context.Organization.AnyAsync(o => o.Id == id && !o.isdelete);
@@ -114,11 +104,8 @@ namespace HRMSPOC.API.Repositories
                 await _roleManager.CreateAsync(new IdentityRole(roleName));
             }
         }
-
-        // Assign the Admin role to the created user
         public async Task AssignRoleToUserAsync(CreateUserDto adminUserDto, string roleName)
         {
-            // Map ApplicationUserDto to ApplicationUser
             var adminUser = await _userManager.FindByEmailAsync(adminUserDto.Email);
             if (adminUser == null)
             {

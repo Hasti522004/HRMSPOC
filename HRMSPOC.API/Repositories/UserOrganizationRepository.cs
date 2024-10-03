@@ -10,7 +10,7 @@ namespace HRMSPOC.API.Repositories
     public class UserOrganizationRepository : IUserOrganizationRepository
     {
         private readonly HRMSDbContext _context;
-        private readonly IMapper _mapper; // Inject AutoMapper for mapping
+        private readonly IMapper _mapper;
 
         public UserOrganizationRepository(HRMSDbContext context, IMapper mapper)
         {
@@ -26,12 +26,10 @@ namespace HRMSPOC.API.Repositories
 
         public async Task<bool> AddUserOrganizationAsync(UserOrganizationDto userOrganizationDTO)
         {
-            // Map DTO to entity
             var userOrganization = _mapper.Map<UserOrganization>(userOrganizationDTO);
 
             await _context.UserOrganizations.AddAsync(userOrganization);
 
-            // Save changes and return true if successful
             return await _context.SaveChangesAsync() > 0;
         }
     }

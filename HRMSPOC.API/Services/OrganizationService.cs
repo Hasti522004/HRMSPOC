@@ -28,6 +28,11 @@ namespace HRMSPOC.API.Services
 
         public async Task<OrganizationDto> GetOrganizationByIdAsync(Guid id)
         {
+            if (!await IsOrganizationExists(id))
+            {
+                throw new KeyNotFoundException("Organization not found.");
+            }
+
             return await _organizationRepository.GetOrganizationByIdAsync(id);
         }
 
@@ -38,11 +43,19 @@ namespace HRMSPOC.API.Services
 
         public async Task UpdateOrganizationAsync(OrganizationDto organization)
         {
+            if (!await IsOrganizationExists(organization.Id))
+            {
+                throw new KeyNotFoundException("Organization not found or deleted.");
+            }
             await _organizationRepository.UpdateOrganizationAsync(organization);
         }
 
         public async Task DeleteOrganizationAsync(Guid id)
         {
+            if (!await IsOrganizationExists(id))
+            {
+                throw new KeyNotFoundException("Organization not found.");
+            }
             await _organizationRepository.DeleteOrganizationAsync(id);
         }
 
