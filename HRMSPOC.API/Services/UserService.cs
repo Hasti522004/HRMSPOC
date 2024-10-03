@@ -1,8 +1,6 @@
 ﻿using HRMSPOC.API.DTOs;
-using HRMSPOC.API.Models;
 using HRMSPOC.API.Repositories.Interfaces;
 using HRMSPOC.API.Services.Interface;
-using Microsoft.AspNetCore.Identity;
 
 namespace HRMSPOC.API.Services
 {
@@ -10,88 +8,157 @@ namespace HRMSPOC.API.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly IOrganizationRepository _organizationRepository;
-        private readonly UserManager<ApplicationUser> _userManager;
         private readonly IUserOrganizationRepository _userOrganizationRepository;
-        public UserService(IUserRepository userRepository, IOrganizationRepository organizationRepository,UserManager<ApplicationUser> userManager, IUserOrganizationRepository userOrganizationRepository)
+
+        public UserService(IUserRepository userRepository, IOrganizationRepository organizationRepository, IUserOrganizationRepository userOrganizationRepository)
         {
             _userRepository = userRepository;
             _organizationRepository = organizationRepository;
-            _userManager = userManager;
             _userOrganizationRepository = userOrganizationRepository;
         }
 
-        public async Task<IEnumerable<ApplicationUser>> GetUsersAsync()
+        public async Task<IEnumerable<ApplicationUserDto>> GetUsersAsync()
         {
-            return await _userRepository.GetUsersAsync();
+            var users = await _userRepository.GetUsersAsync();
+            if (users == null || !users.Any())
+            {
+                throw new Exception("No users found in the system.");
+            }
+            return users;
         }
 
-        public async Task<ApplicationUser> GetUserByIdAsync(string id)
+        public async Task<ApplicationUserDto> GetUserByIdAsync(string id)
         {
-            return await _userRepository.GetUserByIdAsync(id);
+            if (string.IsNullOrEmpty(id))
+            {
+                throw new ArgumentException("User ID cannot be null or empty.");
+            }
+
+            var user = await _userRepository.GetUserByIdAsync(id);
+
+            if (user == null)
+            {
+                throw new Exception($"User with ID {id} not found.");
+            }
+
+            return user;
         }
 
-        public async Task<ApplicationUser> CreateUserAsync(ApplicationUser user, string role)
+        public async Task<ApplicationUserDto> CreateUserAsync(CreateUserDto user, string role)
         {
-            // Validate the CreatedBy field
             if (user.CreatedBy != Guid.Empty)
             {
                 var createdById = user.CreatedBy;
-
-                bool isOrganization = await _organizationRepository.IsOrganizationExists(createdById);
-
-                // Create the user
                 var result = await _userRepository.CreateUserAsync(user);
 
                 if (result != null)
                 {
                     if (!string.IsNullOrEmpty(role))
                     {
-                        await _userManager.AddToRoleAsync(result, role);
+                        await _userRepository.AssignRoleAsync(result.Id, role);
+
                         var organizationId = await _userOrganizationRepository.GetOrganizationIdByUserIdAsync(createdById.ToString());
                         if (organizationId.HasValue)
                         {
-                            await _userOrganizationRepository.AddUserOrganizationAsync(result.Id, organizationId.Value);
+                            var userOrganizationDto = new UserOrganizationDto
+                            {
+                                UserId = result.Id,
+                                OrganizationId = organizationId.Value
+                            };
+                            await _userOrganizationRepository.AddUserOrganizationAsync(userOrganizationDto);
                         }
-
-                    }
-                    else if (isOrganization)
-                    {
-                        await _userManager.AddToRoleAsync(result, "HR");
-                        await _userOrganizationRepository.AddUserOrganizationAsync(result.Id, createdById);
                     }
                     else
                     {
-                        await _userManager.AddToRoleAsync(result, "Employee");
+                        bool isOrganization = await _organizationRepository.IsOrganizationExists(createdById);
+                        string defaultRole = isOrganization ? "HR" : "Employee";
+
+                        await _userRepository.AssignRoleAsync(result.Id, defaultRole);
+
                         var organizationId = await _userOrganizationRepository.GetOrganizationIdByUserIdAsync(createdById.ToString());
                         if (organizationId.HasValue)
                         {
-                            await _userOrganizationRepository.AddUserOrganizationAsync(result.Id, organizationId.Value);
+                            var userOrganizationDto = new UserOrganizationDto
+                            {
+                                UserId = result.Id,
+                                OrganizationId = organizationId.Value
+                            };
+                            await _userOrganizationRepository.AddUserOrganizationAsync(userOrganizationDto);
                         }
                     }
                 }
 
                 return result;
             }
+
             return await _userRepository.CreateUserAsync(user);
         }
 
-
-        public async Task UpdateUserAsync(ApplicationUser user)
+        public async Task UpdateUserAsync(ApplicationUserDto user)
         {
+            var existingUser = await _userRepository.GetUserByIdAsync(user.Id);
+            if (existingUser == null)
+            {
+                throw new Exception("User not found or deleted.");
+            }
+            if (!string.IsNullOrWhiteSpace(user.Password))
+            {
+                var token = await _userRepository.GeneratePasswordResetTokenAsync(user.Id);
+                var result = await _userRepository.ResetPasswordAsync(user.Id, token, user.Password);
+
+                if (!result.Succeeded)
+                {
+                    throw new Exception("Password update failed: " + string.Join(", ", result.Errors));
+                }
+            }
+
             await _userRepository.UpdateUserAsync(user);
+
         }
 
         public async Task DeleteUserAsync(string id)
         {
+            var existingUser = await _userRepository.GetUserByIdAsync(id);
+            if (existingUser == null || existingUser.IsDeleted)
+            {
+                throw new Exception("User not found or already deleted.");
+            }
+
             await _userRepository.DeleteUserAsync(id);
         }
-        public async Task<IEnumerable<ApplicationUser>> GetUsersByCreatedByIdAsync(Guid createdbyId)
+
+        public async Task<IEnumerable<ApplicationUserDto>> GetUsersByCreatedByIdAsync(Guid createdById)
         {
-            return await _userRepository.GetUsersByCreatedByIdAsync(createdbyId);
+            if (createdById == Guid.Empty)
+            {
+                throw new ArgumentException("CreatedById cannot be an empty GUID.", nameof(createdById));
+            }
+
+            var users = await _userRepository.GetUsersByCreatedByIdAsync(createdById);
+
+            if (users == null || !users.Any())
+            {
+                throw new Exception("No users found for the specified CreatedById.");
+            }
+
+            return users;
         }
+
         public async Task<IEnumerable<UserWithRoleDto>> GetUsersByOrganizationIdAsync(Guid organizationId)
         {
-            return await _userRepository.GetUsersByOrganizationIdAsync(organizationId);
+            if (organizationId == Guid.Empty)
+            {
+                throw new ArgumentException("OrganizationId cannot be an empty GUID.", nameof(organizationId));
+            }
+
+            var users = await _userRepository.GetUsersByOrganizationIdAsync(organizationId);
+
+            if (users == null || !users.Any())
+            {
+                throw new Exception("No users found for the specified OrganizationId.");
+            }
+
+            return users;
         }
     }
 }

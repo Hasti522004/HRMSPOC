@@ -1,15 +1,16 @@
-﻿using HRMSPOC.API.Models;
+﻿using HRMSPOC.API.DTOs;
+using HRMSPOC.API.Models;
 
 namespace HRMSPOC.API.Services.Interface
 {
     public interface IOrganizationService
     {
-        Task<IEnumerable<Organization>> GetOrganizationsAsync();
-        Task<Organization> GetOrganizationByIdAsync(Guid id);
-        Task<Organization> CreateOrganizationAsync(Organization organization);
-        Task UpdateOrganizationAsync(Organization organization);
+        Task<IEnumerable<OrganizationDto>> GetOrganizationsAsync();
+        Task<OrganizationDto> GetOrganizationByIdAsync(Guid id);
+        Task<OrganizationDto> CreateOrganizationAsync(CreateOrganizationDto organization);
+        Task UpdateOrganizationAsync(OrganizationDto organization);
         Task DeleteOrganizationAsync(Guid id);
-        Task<Organization> CreateOrganizationWithAdminAsync(Organization organization, Guid superAdminId);
+        Task<OrganizationDto> CreateOrganizationWithAdminAsync(CreateOrganizationDto organization, Guid superAdminId);
         Task<bool> IsOrganizationExists(Guid id);
 
     }

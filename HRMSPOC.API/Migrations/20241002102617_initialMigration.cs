@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace HRMSPOC.API.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class initialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -49,7 +51,7 @@ namespace HRMSPOC.API.Migrations
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    isdelete = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -218,6 +220,27 @@ namespace HRMSPOC.API.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { "5436f448-80f2-4c04-a63c-5ec8c0f3ab45", null, "Employee", "EMPLOYEE" },
+                    { "58912799-e566-46c7-a04d-1820583583e2", null, "HR", "HR" },
+                    { "c3abd2de-cd82-4b95-a48c-d6ad9f2ea03b", null, "SuperAdmin", "SUPERADMIN" },
+                    { "c809dfc9-0931-408d-b9c1-91d1e92e6ec6", null, "Admin", "ADMIN" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Id", "AccessFailedCount", "Address", "ConcurrencyStamp", "CreatedAt", "CreatedBy", "Email", "EmailConfirmed", "FirstName", "IsDeleted", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[] { "9a5f1bdf-4c22-43d1-a479-a4ae61d8ad2a", 0, "123 Admin St", "1dbe3533-a96b-495c-b369-f43e18329c77", new DateTime(2024, 10, 2, 10, 26, 17, 311, DateTimeKind.Utc).AddTicks(14), new Guid("00000000-0000-0000-0000-000000000000"), "superadmin@admin.com", true, "Super", false, "Admin", false, null, "SUPERADMIN@ADMIN.COM", "SUPERADMIN@ADMIN.COM", "AQAAAAIAAYagAAAAEOUNn0w4LP5HEEVQyazdrNLPyaJQ4Qn1dKkmSyQ4ln8S3PbT4WKhw5IV+VHf7JGl3A==", null, false, "6c39e6a5-a0a2-4b2b-b6c9-5acc61606e52", false, "superadmin@admin.com" });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUserRoles",
+                columns: new[] { "RoleId", "UserId" },
+                values: new object[] { "c3abd2de-cd82-4b95-a48c-d6ad9f2ea03b", "9a5f1bdf-4c22-43d1-a479-a4ae61d8ad2a" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",

@@ -11,15 +11,21 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using HRMSPOC.API.Middleware;
 using Microsoft.OpenApi.Models;
+using HRMSPOC.API.Mapping;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+// Add services to the container.
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+    });
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo { Title = "HRMS POC API", Version = "v1" });
-
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
@@ -49,6 +55,8 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddDbContext<HRMSDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("conn")));
 
+builder.Services.AddAutoMapper(typeof(MappingProfile));
+
 // Identity Services
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<HRMSDbContext>()
@@ -73,46 +81,17 @@ builder.Services.AddAuthentication(options =>
         RequireExpirationTime = true,
         ValidateLifetime = true
     };
-
-    // Hook into the events for logging
-    options.Events = new JwtBearerEvents
-    {
-        OnMessageReceived = context =>
-        {
-            var token = context.Request.Headers["Authorization"].ToString();
-            if (string.IsNullOrEmpty(token))
-            {
-                Console.WriteLine("Authorization header is missing.");
-            }
-            else
-            {
-                Console.WriteLine($"Authorization header received: {token}");
-            }
-            return Task.CompletedTask;
-        },
-        OnAuthenticationFailed = context =>
-        {
-            Console.WriteLine($"Authentication failed: {context.Exception.Message}");
-            return Task.CompletedTask;
-        },
-        OnChallenge = context =>
-        {
-            Console.WriteLine("JWT authentication challenge failed.");
-            return Task.CompletedTask;
-        }
-    };
 });
 
 // Add CORS policy
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll",
-        policy =>
-        {
-            policy.AllowAnyOrigin()
-                  .AllowAnyMethod()
-                  .AllowAnyHeader();
-        });
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
 });
 
 // Configure Authorization Policies
@@ -129,27 +108,12 @@ builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IOrganizationRepository, OrganizationRepository>();
 builder.Services.AddScoped<IUserOrganizationRepository, UserOrganizationRepository>();
-
-builder.Services.AddScoped<DataSeeder>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IOrganizationService, OrganizationService>();
 builder.Services.AddScoped<IUserOrganizationService, UserOrganizationService>();
 
-builder.Services.AddControllers()
-    .AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
-    });
-
 var app = builder.Build();
-
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    var dataSeeder = services.GetRequiredService<DataSeeder>();
-    await dataSeeder.SeedAdminUserAsync(); 
-}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -170,4 +134,13 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+// Migrate and seed database
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<HRMSDbContext>();
+    await context.Database.MigrateAsync(); // Apply any pending migrations
+}
+
+// Run the application
 app.Run();

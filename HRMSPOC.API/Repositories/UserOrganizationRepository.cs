@@ -1,4 +1,6 @@
-﻿using HRMSPOC.API.Data;
+﻿using AutoMapper;
+using HRMSPOC.API.Data;
+using HRMSPOC.API.DTOs;
 using HRMSPOC.API.Models;
 using HRMSPOC.API.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -8,28 +10,27 @@ namespace HRMSPOC.API.Repositories
     public class UserOrganizationRepository : IUserOrganizationRepository
     {
         private readonly HRMSDbContext _context;
-        public UserOrganizationRepository(HRMSDbContext context)
+        private readonly IMapper _mapper;
+
+        public UserOrganizationRepository(HRMSDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
+
         public async Task<Guid?> GetOrganizationIdByUserIdAsync(string userId)
         {
             var userOrganization = await _context.UserOrganizations.FirstOrDefaultAsync(u => u.UserId == userId);
             return userOrganization?.OrganizationId;
         }
-        public async Task<bool> AddUserOrganizationAsync(string userId, Guid organizationId)
+
+        public async Task<bool> AddUserOrganizationAsync(UserOrganizationDto userOrganizationDTO)
         {
-            var userOrganization = new UserOrganization
-            {
-                UserId = userId,
-                OrganizationId = organizationId
-            };
+            var userOrganization = _mapper.Map<UserOrganization>(userOrganizationDTO);
 
             await _context.UserOrganizations.AddAsync(userOrganization);
 
-            // Save changes and return true if successful, otherwise false
-            return await _context.SaveChangesAsync() > 0; // Returns true if any row was affected
+            return await _context.SaveChangesAsync() > 0;
         }
-
     }
 }

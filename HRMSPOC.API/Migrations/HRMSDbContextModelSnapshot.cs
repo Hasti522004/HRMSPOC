@@ -92,6 +92,9 @@ namespace HRMSPOC.API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -129,9 +132,6 @@ namespace HRMSPOC.API.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
-                    b.Property<bool>("isdelete")
-                        .HasColumnType("bit");
-
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedEmail")
@@ -143,6 +143,30 @@ namespace HRMSPOC.API.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("Users", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "9a5f1bdf-4c22-43d1-a479-a4ae61d8ad2a",
+                            AccessFailedCount = 0,
+                            Address = "123 Admin St",
+                            ConcurrencyStamp = "1dbe3533-a96b-495c-b369-f43e18329c77",
+                            CreatedAt = new DateTime(2024, 10, 2, 10, 26, 17, 311, DateTimeKind.Utc).AddTicks(14),
+                            CreatedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            Email = "superadmin@admin.com",
+                            EmailConfirmed = true,
+                            FirstName = "Super",
+                            IsDeleted = false,
+                            LastName = "Admin",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "SUPERADMIN@ADMIN.COM",
+                            NormalizedUserName = "SUPERADMIN@ADMIN.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAEOUNn0w4LP5HEEVQyazdrNLPyaJQ4Qn1dKkmSyQ4ln8S3PbT4WKhw5IV+VHf7JGl3A==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "6c39e6a5-a0a2-4b2b-b6c9-5acc61606e52",
+                            TwoFactorEnabled = false,
+                            UserName = "superadmin@admin.com"
+                        });
                 });
 
             modelBuilder.Entity("HRMSPOC.API.Models.Organization", b =>
@@ -207,6 +231,32 @@ namespace HRMSPOC.API.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "c3abd2de-cd82-4b95-a48c-d6ad9f2ea03b",
+                            Name = "SuperAdmin",
+                            NormalizedName = "SUPERADMIN"
+                        },
+                        new
+                        {
+                            Id = "c809dfc9-0931-408d-b9c1-91d1e92e6ec6",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "58912799-e566-46c7-a04d-1820583583e2",
+                            Name = "HR",
+                            NormalizedName = "HR"
+                        },
+                        new
+                        {
+                            Id = "5436f448-80f2-4c04-a63c-5ec8c0f3ab45",
+                            Name = "Employee",
+                            NormalizedName = "EMPLOYEE"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -294,6 +344,13 @@ namespace HRMSPOC.API.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "9a5f1bdf-4c22-43d1-a479-a4ae61d8ad2a",
+                            RoleId = "c3abd2de-cd82-4b95-a48c-d6ad9f2ea03b"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>

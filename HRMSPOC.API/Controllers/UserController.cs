@@ -20,7 +20,7 @@ namespace HRMSPOC.API.Controllers
         // Get all users
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<ApplicationUser>>> GetAllUsers()
+        public async Task<ActionResult<IEnumerable<ApplicationUserDto>>> GetAllUsers()
         {
             var users = await _userService.GetUsersAsync();
             return Ok(users);
@@ -29,7 +29,7 @@ namespace HRMSPOC.API.Controllers
         // Get user by ID (string from IdentityUser)
         [HttpGet("{id}")]
         [Authorize]
-        public async Task<ActionResult<ApplicationUser>> GetUserById(string id)
+        public async Task<ActionResult<ApplicationUserDto>> GetUserById(string id)
         {
             var user = await _userService.GetUserByIdAsync(id);
             if (user == null)
@@ -43,7 +43,7 @@ namespace HRMSPOC.API.Controllers
         [HttpPost("{role}")]
         [Authorize(Roles = "SuperAdmin,Admin,HR")]
 
-        public async Task<ActionResult<ApplicationUser>> CreateUser([FromBody] ApplicationUser user,string role)
+        public async Task<ActionResult<ApplicationUserDto>> CreateUser([FromBody] CreateUserDto user,string role)
         {
             if (user == null)
             {
@@ -57,7 +57,7 @@ namespace HRMSPOC.API.Controllers
         [HttpPut]
         [Authorize(Roles = "SuperAdmin,Admin,HR")]
 
-        public async Task<ActionResult> UpdateUser([FromBody] ApplicationUser user)
+        public async Task<ActionResult> UpdateUser([FromBody] ApplicationUserDto user)
         {
             if (user == null || string.IsNullOrEmpty(user.Id))
             {
@@ -89,7 +89,7 @@ namespace HRMSPOC.API.Controllers
         }
         [HttpGet("createdby/{createdbyId}")]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<ApplicationUser>>> GetUsersByCreatedById(Guid createdbyId)
+        public async Task<ActionResult<IEnumerable<ApplicationUserDto>>> GetUsersByCreatedById(Guid createdbyId)
         {
             var users = await _userService.GetUsersByCreatedByIdAsync(createdbyId);
             return Ok(users);

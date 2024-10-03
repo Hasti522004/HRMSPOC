@@ -28,7 +28,7 @@ namespace HRMSPOC.API.Repositories
                 throw new Exception("User Not Found");
             }
 
-            if (user.isdelete)
+            if (user.IsDeleted)
             {
                 throw new Exception("User was not found.");
             }

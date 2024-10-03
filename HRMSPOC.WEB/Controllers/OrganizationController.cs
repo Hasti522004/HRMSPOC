@@ -83,12 +83,10 @@ namespace HRMSPOC.WEB.Controllers
             return View();
         }
 
-        // Redirect to manage HR while setting the organization ID
         public IActionResult ManageHR(Guid organizationId)
         {
-            // Set the OrganizationId in the session
             HttpContext.Session.SetString("OrganizationId", organizationId.ToString());
-            return RedirectToAction("Index", "User"); // Redirect to User Index to manage users for the organization
+            return RedirectToAction("Index", "User"); 
         }
     }
 }
