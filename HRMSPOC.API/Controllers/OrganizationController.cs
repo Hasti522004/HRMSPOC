@@ -41,7 +41,7 @@ namespace HRMSPOC.API.Controllers
 
         // Create new organization
         [HttpPost]
-        public async Task<ActionResult<OrganizationDto>> CreateOrganization([FromBody] OrganizationDto organization)
+        public async Task<ActionResult<OrganizationDto>> CreateOrganization([FromBody] CreateOrganizationDto organization)
         {
             if (organization == null)
             {

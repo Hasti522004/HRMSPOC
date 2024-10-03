@@ -44,7 +44,7 @@ namespace HRMSPOC.API.Repositories
         }
 
         // Create a new organization
-        public async Task<OrganizationDto> CreateOrganizationAsync(OrganizationDto organizationDto)
+        public async Task<OrganizationDto> CreateOrganizationAsync(CreateOrganizationDto organizationDto)
         {
             var organization = _mapper.Map<Organization>(organizationDto);
             await _context.Organization.AddAsync(organization);
@@ -81,7 +81,7 @@ namespace HRMSPOC.API.Repositories
         }
 
         // Create an admin user for the organization
-        public async Task CreateAdminUserAsync(ApplicationUserDto adminUserDto, Guid organizationId)
+        public async Task CreateAdminUserAsync(CreateUserDto adminUserDto, Guid organizationId)
         {
             var adminUser = _mapper.Map<ApplicationUser>(adminUserDto);
             adminUser.UserName = adminUser.Email; // Set username to email
@@ -116,7 +116,7 @@ namespace HRMSPOC.API.Repositories
         }
 
         // Assign the Admin role to the created user
-        public async Task AssignRoleToUserAsync(ApplicationUserDto adminUserDto, string roleName)
+        public async Task AssignRoleToUserAsync(CreateUserDto adminUserDto, string roleName)
         {
             // Map ApplicationUserDto to ApplicationUser
             var adminUser = await _userManager.FindByEmailAsync(adminUserDto.Email);

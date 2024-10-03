@@ -10,9 +10,11 @@ namespace HRMSPOC.API.Mapping
         {
            // CreateMap<ApplicationUserDto, ApplicationUser>().ForMember(dest => dest.Id, opt => opt.Ignore());
            CreateMap<ApplicationUserDto, ApplicationUser>();
+            CreateMap<ApplicationUser, ApplicationUserDto>();
             CreateMap<ApplicationUser,CreateUserDto>();
             CreateMap<CreateUserDto,ApplicationUser>();
-            CreateMap<ApplicationUser, ApplicationUserDto>();
+            CreateMap<Organization, CreateOrganizationDto>();
+            CreateMap<CreateOrganizationDto,Organization>();
             CreateMap<Organization, OrganizationDto>().ReverseMap();
             CreateMap<UserOrganization, UserOrganizationDto>().ReverseMap();
         }

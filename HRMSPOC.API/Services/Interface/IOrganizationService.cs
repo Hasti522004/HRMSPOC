@@ -7,10 +7,10 @@ namespace HRMSPOC.API.Services.Interface
     {
         Task<IEnumerable<OrganizationDto>> GetOrganizationsAsync();
         Task<OrganizationDto> GetOrganizationByIdAsync(Guid id);
-        Task<OrganizationDto> CreateOrganizationAsync(OrganizationDto organization);
+        Task<OrganizationDto> CreateOrganizationAsync(CreateOrganizationDto organization);
         Task UpdateOrganizationAsync(OrganizationDto organization);
         Task DeleteOrganizationAsync(Guid id);
-        Task<OrganizationDto> CreateOrganizationWithAdminAsync(OrganizationDto organization, Guid superAdminId);
+        Task<OrganizationDto> CreateOrganizationWithAdminAsync(CreateOrganizationDto organization, Guid superAdminId);
         Task<bool> IsOrganizationExists(Guid id);
 
     }

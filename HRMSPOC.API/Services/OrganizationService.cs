@@ -31,7 +31,7 @@ namespace HRMSPOC.API.Services
             return await _organizationRepository.GetOrganizationByIdAsync(id);
         }
 
-        public async Task<OrganizationDto> CreateOrganizationAsync(OrganizationDto organization)
+        public async Task<OrganizationDto> CreateOrganizationAsync(CreateOrganizationDto organization)
         {
             return await _organizationRepository.CreateOrganizationAsync(organization);
         }
@@ -46,11 +46,11 @@ namespace HRMSPOC.API.Services
             await _organizationRepository.DeleteOrganizationAsync(id);
         }
 
-        public async Task<OrganizationDto> CreateOrganizationWithAdminAsync(OrganizationDto organization, Guid superAdminId)
+        public async Task<OrganizationDto> CreateOrganizationWithAdminAsync(CreateOrganizationDto organization, Guid superAdminId)
         {
             var createdOrganization = await _organizationRepository.CreateOrganizationAsync(organization);
 
-            var adminUser = new ApplicationUserDto
+            var adminUser = new CreateUserDto
             {
                 Email = "admin@" + createdOrganization.Name.Replace(" ", "").ToLower() + ".com",
                 FirstName = "Admin",
